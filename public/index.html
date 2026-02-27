@@ -56,6 +56,7 @@
     <ul class="nav-links" id="nav-links">
       <li><a href="#tours" class="nav-link">ტურები</a></li>
       <li><a href="#destinations" class="nav-link">მიმართულებები</a></li>
+      <li><a href="#fleet" class="nav-link">ფლოტი</a></li>
       <li><a href="#gallery" class="nav-link">გალერეა</a></li>
       <li><a href="#about" class="nav-link">ჩვენ შესახებ</a></li>
       <li><a href="#contact" class="nav-link">კონტაქტი</a></li>
@@ -77,6 +78,7 @@
   <div class="mobile-menu" id="mobile-menu">
     <a href="#tours" class="mob-link">ტურები</a>
     <a href="#destinations" class="mob-link">მიმართულებები</a>
+    <a href="#fleet" class="mob-link">ფლოტი</a>
     <a href="#gallery" class="mob-link">გალერეა</a>
     <a href="#about" class="mob-link">ჩვენ შესახებ</a>
     <a href="#contact" class="mob-link">კონტაქტი</a>
@@ -377,6 +379,31 @@
         <!-- Loaded by JS -->
       </div>
       <div class="swiper-pagination testimonials-pagination"></div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ FLEET / CARS ════════════════════════════════════════════════════════ -->
+<section id="fleet" class="section section-dark">
+  <div class="container">
+    <div class="section-header" data-aos="fade-up">
+      <span class="section-tag">ტრანსპორტი</span>
+      <h2 class="section-title">ჩვენი <em>ფლოტი</em></h2>
+      <p class="section-subtitle">პრემიუმ მანქანები თქვენი კომფორტულ მოგზაურობისთვის</p>
+    </div>
+    <div class="fleet-filter" data-aos="fade-up" data-aos-delay="100">
+      <button class="fleet-filter-btn active" data-cat="all">ყველა</button>
+      <button class="fleet-filter-btn" data-cat="economy">ეკონომი</button>
+      <button class="fleet-filter-btn" data-cat="jeep">ჯიპი</button>
+      <button class="fleet-filter-btn" data-cat="vip">VIP</button>
+      <button class="fleet-filter-btn" data-cat="minivan">მინივენი</button>
+    </div>
+    <div class="fleet-grid" id="fleet-grid" data-aos="fade-up" data-aos-delay="200">
+      <!-- Loaded by JS -->
+    </div>
+    <div id="fleet-empty" style="display:none;text-align:center;padding:60px 20px;color:var(--muted-color)">
+      <i class="fa-solid fa-car" style="font-size:2.5rem;margin-bottom:16px;opacity:0.3"></i>
+      <p>ამ კატეგორიაში მანქანა არ არის</p>
     </div>
   </div>
 </section>

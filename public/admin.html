@@ -66,6 +66,9 @@
       <a href="#" class="nav-item" data-page="testimonials">
         <i class="fa-solid fa-star"></i> <span>შეფასებები</span>
       </a>
+      <a href="#" class="nav-item" data-page="cars">
+        <i class="fa-solid fa-car"></i> <span>მანქანები</span>
+      </a>
       <a href="#" class="nav-item" data-page="gallery">
         <i class="fa-solid fa-images"></i> <span>გალერეა</span>
       </a>
@@ -222,6 +225,18 @@
           <button class="btn-add" id="add-test-btn"><i class="fa-solid fa-plus"></i> ახალი</button>
         </div>
         <div class="testimonials-grid" id="testimonials-grid"></div>
+      </div>
+
+      <!-- ─── CARS ──────────────────────────────────────────────────────── -->
+      <div id="page-cars" class="page">
+        <div class="page-header">
+          <div>
+            <h2>მანქანები</h2>
+            <p class="page-sub">ფლოტის მართვა — დამატება, რედაქტირება, წაშლა</p>
+          </div>
+          <button class="btn-add" id="add-car-btn"><i class="fa-solid fa-plus"></i> ახალი მანქანა</button>
+        </div>
+        <div class="cars-admin-grid" id="cars-admin-grid"></div>
       </div>
 
       <!-- ─── GALLERY ────────────────────────────────────────────────────── -->
@@ -415,6 +430,56 @@
       <div class="modal-footer">
         <button type="button" class="btn-cancel" onclick="Admin.closeGalleryModal()">გაუქმება</button>
         <button type="submit" class="btn-save">შენახვა</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Car Form Modal -->
+<div id="car-form-modal" class="modal-bg">
+  <div class="modal-card" style="max-width:520px">
+    <div class="modal-header">
+      <h3 id="car-modal-title">ახალი მანქანა</h3>
+      <button class="modal-x" onclick="Admin.closeCarModal()"><i class="fa-solid fa-xmark"></i></button>
+    </div>
+    <form id="car-form">
+      <input type="hidden" name="id" />
+      <div class="modal-body">
+        <div class="form-row-2">
+          <div class="form-group"><label>მოდელი / სახელი *</label><input type="text" name="name" required placeholder="Toyota Land Cruiser" /></div>
+          <div class="form-group"><label>კატეგორია</label>
+            <select name="category">
+              <option value="economy">ეკონომი</option>
+              <option value="jeep">ჯიპი / 4WD</option>
+              <option value="vip">VIP / ლუქსი</option>
+              <option value="minivan">მინივენი</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-group"><label>აღწერა</label><textarea name="description" rows="3" placeholder="მოკლე აღწერა..."></textarea></div>
+        <div class="form-row-2">
+          <div class="form-group"><label>სავარძლები</label><input type="number" name="seats" value="4" min="1" max="50" /></div>
+          <div class="form-group"><label>ფასი ($) / დღეში</label><input type="number" name="price_per_day" placeholder="0" min="0" /></div>
+        </div>
+        <div class="form-group"><label>მახასიათებლები (მძიმით)</label><input type="text" name="features" placeholder="4WD,კონდ.,WiFi,GPS" /></div>
+        <div class="form-group">
+          <label>ფოტო</label>
+          <input type="file" id="car-file-pick" accept="image/*" style="display:none" />
+          <button type="button" class="btn-file-pick" onclick="document.getElementById('car-file-pick').click()">
+            <i class="fa-solid fa-upload"></i> ფაილიდან არჩევა
+          </button>
+          <input type="text" name="image" id="car-image-input" placeholder="ან ჩასვით ბმული https://..." style="margin-top:8px" />
+          <div class="upload-preview" id="car-img-preview"></div>
+        </div>
+        <div class="form-row-2">
+          <div class="form-group"><label>სტატუსი</label>
+            <select name="available"><option value="1">ხელმისაწვდომი</option><option value="0">მიუწვდომელი</option></select>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn-cancel" onclick="Admin.closeCarModal()">გაუქმება</button>
+        <button type="submit" class="btn-save"><i class="fa-solid fa-floppy-disk"></i> შენახვა</button>
       </div>
     </form>
   </div>

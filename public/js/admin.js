@@ -96,6 +96,28 @@ const Admin = {
     document.getElementById('test-form')?.addEventListener('submit', e => this.saveTestimonial(e));
     document.getElementById('add-test-btn')?.addEventListener('click', () => this.openTestModal());
 
+    // Car form
+    document.getElementById('car-form')?.addEventListener('submit', e => this.saveCar(e));
+    document.getElementById('add-car-btn')?.addEventListener('click', () => this.openCarModal());
+
+    // Car file pick
+    document.getElementById('car-file-pick')?.addEventListener('change', async e => {
+      const file = e.target.files[0];
+      if (!file) return;
+      const b64 = await this.compressImage(file);
+      document.getElementById('car-image-input').value = b64;
+      document.getElementById('car-img-preview').innerHTML = `<img src="${b64}" />`;
+    });
+
+    // Car URL input preview
+    document.getElementById('car-image-input')?.addEventListener('input', e => {
+      const prev = document.getElementById('car-img-preview');
+      if (!prev) return;
+      const v = e.target.value;
+      if (v && !v.startsWith('data:')) prev.innerHTML = `<img src="${v}" onerror="this.style.display='none'" />`;
+      else if (!v) prev.innerHTML = '';
+    });
+
     // Gallery form
     document.getElementById('gallery-form')?.addEventListener('submit', e => this.saveGallery(e));
     document.getElementById('add-photo-btn')?.addEventListener('click', () => this.openGalleryModal());
@@ -152,9 +174,9 @@ const Admin = {
     document.querySelector(`.nav-item[data-page="${page}"]`)?.classList.add('active');
     document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
     document.getElementById(`page-${page}`)?.classList.add('active');
-    const titles = { dashboard:'Dashboard', tours:'ტურები', bookings:'ჯავშნები', messages:'შეტყობინებები', testimonials:'შეფასებები', gallery:'გალერეა', settings:'პარამეტრები' };
+    const titles = { dashboard:'Dashboard', tours:'ტურები', bookings:'ჯავშნები', messages:'შეტყობინებები', testimonials:'შეფასებები', cars:'მანქანები', gallery:'გალერეა', settings:'პარამეტრები' };
     document.getElementById('page-title').textContent = titles[page] || page;
-    const loaders = { tours: () => this.loadTours(), bookings: () => this.loadBookings(), messages: () => this.loadMessages(), testimonials: () => this.loadTestimonials(), gallery: () => this.loadGallery(), settings: () => this.loadSettings() };
+    const loaders = { tours: () => this.loadTours(), bookings: () => this.loadBookings(), messages: () => this.loadMessages(), testimonials: () => this.loadTestimonials(), cars: () => this.loadCars(), gallery: () => this.loadGallery(), settings: () => this.loadSettings() };
     loaders[page]?.();
   },
 
@@ -519,6 +541,93 @@ const Admin = {
   async deleteTestimonial(id) {
     if (!this.confirm('წაშლა?')) return;
     try { await this.api(`/api/admin/testimonials/${id}`, 'DELETE'); this.loadTestimonials(); this.toast('✅ წაიშალა', 's'); }
+    catch(e) { this.toast('❌ შეცდომა', 'e'); }
+  },
+
+  // ── CARS ──────────────────────────────────────────────────────────────────
+  allCars: [],
+  async loadCars() {
+    try {
+      this.allCars = await this.api('/api/admin/cars');
+      const grid = document.getElementById('cars-admin-grid');
+      if (!grid) return;
+      if (!this.allCars.length) {
+        grid.innerHTML = '<div style="padding:40px;text-align:center;color:var(--muted)">მანქანა არ არის დამატებული. დააჭირე "ახალი მანქანა"</div>';
+        return;
+      }
+      const catLabel = { economy:'ეკონომი', jeep:'ჯიპი / 4WD', vip:'VIP', minivan:'მინივენი' };
+      grid.innerHTML = this.allCars.map(c => `
+        <div class="cars-admin-card">
+          <div class="cars-admin-img-wrap">
+            ${c.image
+              ? `<img class="cars-admin-img" src="${c.image}" alt="${c.name}" onerror="this.style.display='none'" />`
+              : `<div class="cars-no-img"><i class="fa-solid fa-car"></i></div>`}
+            <span class="cars-cat-badge">${catLabel[c.category]||c.category}</span>
+          </div>
+          <div class="cars-admin-info">
+            <div class="cars-admin-name">${c.name}</div>
+            <div class="cars-admin-meta">
+              <span><i class="fa-solid fa-user-group"></i> ${c.seats} სავარძ.</span>
+              ${c.price_per_day ? `<span><i class="fa-solid fa-dollar-sign"></i> ${c.price_per_day}/დღე</span>` : ''}
+            </div>
+            ${c.description ? `<div class="cars-admin-desc">${c.description.slice(0,80)}${c.description.length>80?'...':''}</div>` : ''}
+            <div class="cars-admin-footer">
+              <span class="badge ${c.available?'badge-active':'badge-inactive'}">${c.available?'ხელმისაწვდ.':'მიუწვდ.'}</span>
+              <div class="act-btns">
+                <button class="act-btn edit" onclick="Admin.openCarModal(${c.id})"><i class="fa-solid fa-pen"></i></button>
+                <button class="act-btn delete" onclick="Admin.deleteCar(${c.id})"><i class="fa-solid fa-trash"></i></button>
+              </div>
+            </div>
+          </div>
+        </div>
+      `).join('');
+    } catch(e) { this.toast('Cars load error', 'e'); }
+  },
+
+  openCarModal(id = null) {
+    const form = document.getElementById('car-form');
+    form.reset();
+    form.querySelector('[name="id"]').value = '';
+    document.getElementById('car-modal-title').textContent = id ? 'მანქანის რედ.' : 'ახალი მანქანა';
+    document.getElementById('car-img-preview').innerHTML = '';
+    const fp = document.getElementById('car-file-pick'); if (fp) fp.value = '';
+    if (id) {
+      const c = this.allCars.find(x => x.id === id);
+      if (c) {
+        form.querySelector('[name="id"]').value = c.id;
+        form.querySelector('[name="name"]').value = c.name||'';
+        form.querySelector('[name="description"]').value = c.description||'';
+        form.querySelector('[name="seats"]').value = c.seats||4;
+        form.querySelector('[name="category"]').value = c.category||'economy';
+        form.querySelector('[name="price_per_day"]').value = c.price_per_day||'';
+        form.querySelector('[name="image"]').value = c.image||'';
+        form.querySelector('[name="features"]').value = c.features||'';
+        form.querySelector('[name="available"]').value = c.available?'1':'0';
+        if (c.image) document.getElementById('car-img-preview').innerHTML = `<img src="${c.image}" onerror="this.style.display='none'" />`;
+      }
+    }
+    document.getElementById('car-form-modal').classList.add('open');
+  },
+
+  closeCarModal() { document.getElementById('car-form-modal').classList.remove('open'); },
+
+  async saveCar(e) {
+    e.preventDefault();
+    const fd = new FormData(e.target);
+    const data = Object.fromEntries(fd.entries());
+    const id = data.id; delete data.id;
+    try {
+      if (id) await this.api(`/api/admin/cars/${id}`, 'PUT', data);
+      else await this.api('/api/admin/cars', 'POST', data);
+      this.closeCarModal();
+      this.loadCars();
+      this.toast(id ? '✅ მანქანა განახლდა' : '✅ მანქანა დაემატა', 's');
+    } catch(err) { this.toast('❌ ' + err.message, 'e'); }
+  },
+
+  async deleteCar(id) {
+    if (!this.confirm('წაშლა?')) return;
+    try { await this.api(`/api/admin/cars/${id}`, 'DELETE'); this.loadCars(); this.toast('✅ წაიშალა', 's'); }
     catch(e) { this.toast('❌ შეცდომა', 'e'); }
   },
 

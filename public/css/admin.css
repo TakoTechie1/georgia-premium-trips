@@ -371,6 +371,20 @@ input, select, textarea { font-family: var(--font); }
 .gallery-img-preview { margin: 10px 0; border-radius: var(--radius); overflow:hidden; min-height:10px; }
 .gallery-img-preview img { width:100%; max-height:200px; object-fit:cover; }
 
+/* Cars Admin */
+.cars-admin-grid { display:grid; grid-template-columns: repeat(auto-fill,minmax(220px,1fr)); gap:14px; }
+.cars-admin-card { background:var(--card); border-radius:var(--radius); overflow:hidden; border:1px solid var(--border); }
+.cars-admin-img-wrap { position:relative; height:140px; background:var(--bg3); overflow:hidden; }
+.cars-admin-img { width:100%; height:100%; object-fit:cover; }
+.cars-no-img { width:100%; height:100%; display:flex; align-items:center; justify-content:center; color:var(--dim); font-size:2.5rem; }
+.cars-cat-badge { position:absolute; top:8px; left:8px; background:rgba(0,0,0,0.72); color:var(--gold); font-size:0.68rem; padding:3px 8px; border-radius:20px; }
+.cars-admin-info { padding:12px; }
+.cars-admin-name { font-size:0.9rem; font-weight:600; margin-bottom:6px; }
+.cars-admin-meta { display:flex; gap:12px; color:var(--muted); font-size:0.75rem; margin-bottom:6px; }
+.cars-admin-meta i { color:var(--gold); margin-right:3px; }
+.cars-admin-desc { font-size:0.75rem; color:var(--muted); margin-bottom:8px; line-height:1.4; }
+.cars-admin-footer { display:flex; justify-content:space-between; align-items:center; }
+
 /* File upload button & tour preview */
 .btn-file-pick {
   display: flex; align-items: center; justify-content: center; gap: 8px;

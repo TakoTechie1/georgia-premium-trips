@@ -433,6 +433,56 @@ async function loadTestimonials() {
 let galleryItems = [];
 let lightboxIdx = 0;
 
+// ── FLEET ─────────────────────────────────────────────────────────────────
+async function loadFleet(category = 'all') {
+  try {
+    const url = category === 'all' ? '/api/cars' : `/api/cars?category=${category}`;
+    const res = await fetch(url);
+    const cars = await res.json();
+    const grid = document.getElementById('fleet-grid');
+    const empty = document.getElementById('fleet-empty');
+    if (!grid) return;
+    if (!cars.length) {
+      grid.style.display = 'none';
+      if (empty) empty.style.display = 'block';
+      return;
+    }
+    if (empty) empty.style.display = 'none';
+    grid.style.display = '';
+    const catIcon = { economy: 'fa-car', jeep: 'fa-truck-monster', vip: 'fa-gem', minivan: 'fa-van-shuttle' };
+    const catLabel = { economy: 'ეკონომი', jeep: 'ჯიპი / 4WD', vip: 'VIP', minivan: 'მინივენი' };
+    grid.innerHTML = cars.map(c => `
+      <div class="fleet-card">
+        <div class="fleet-img-wrap">
+          ${c.image
+            ? `<img src="${c.image}" alt="${c.name}" loading="lazy" onerror="this.parentElement.innerHTML='<div class=fleet-no-img><i class=fa-solid fa-car></i></div>'" />`
+            : `<div class="fleet-no-img"><i class="fa-solid ${catIcon[c.category]||'fa-car'}"></i></div>`}
+          <span class="fleet-cat">${catLabel[c.category]||c.category}</span>
+        </div>
+        <div class="fleet-info">
+          <h3 class="fleet-name">${c.name}</h3>
+          ${c.description ? `<p class="fleet-desc">${c.description}</p>` : ''}
+          <div class="fleet-meta">
+            <span><i class="fa-solid fa-user-group"></i> ${c.seats} ადამიანი</span>
+            ${c.price_per_day ? `<span><i class="fa-solid fa-dollar-sign"></i> ${c.price_per_day}/დღე</span>` : ''}
+          </div>
+          ${c.features ? `<div class="fleet-features">${c.features.split(',').map(f=>`<span class="fleet-feature">${f.trim()}</span>`).join('')}</div>` : ''}
+        </div>
+      </div>
+    `).join('');
+  } catch(e) {}
+}
+
+function initFleetFilters() {
+  document.querySelectorAll('.fleet-filter-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.fleet-filter-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      loadFleet(btn.dataset.cat);
+    });
+  });
+}
+
 async function loadGallery(category = 'all') {
   try {
     const url = category === 'all' ? '/api/gallery' : `/api/gallery?category=${category}`;
@@ -745,9 +795,10 @@ document.addEventListener('DOMContentLoaded', async () => {
   initBackToTop();
   addHoverSounds();
 
-  await Promise.all([loadSettings(), loadTours(), loadTestimonials(), loadGallery()]);
+  await Promise.all([loadSettings(), loadTours(), loadTestimonials(), loadFleet(), loadGallery()]);
 
   initTourFilters();
+  initFleetFilters();
   initBookingForm();
   initContactForm();
 

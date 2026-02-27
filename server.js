@@ -89,6 +89,19 @@ function initDB() {
       order_index INTEGER DEFAULT 0
     );
 
+    CREATE TABLE IF NOT EXISTS cars (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      name TEXT NOT NULL,
+      description TEXT,
+      seats INTEGER DEFAULT 4,
+      category TEXT DEFAULT 'economy',
+      price_per_day INTEGER DEFAULT 0,
+      image TEXT,
+      features TEXT,
+      available INTEGER DEFAULT 1,
+      order_index INTEGER DEFAULT 0
+    );
+
     CREATE TABLE IF NOT EXISTS settings (
       key TEXT PRIMARY KEY,
       value TEXT
@@ -273,6 +286,15 @@ app.get('/api/tours', (req, res) => {
 app.get('/api/tours/:id', (req, res) => {
   const t = db.prepare('SELECT * FROM tours WHERE id=? AND active=1').get(req.params.id);
   t ? res.json(t) : res.status(404).json({ error: 'Not found' });
+});
+
+app.get('/api/cars', (req, res) => {
+  const { category } = req.query;
+  let q = 'SELECT * FROM cars WHERE available=1';
+  const p = [];
+  if (category && category !== 'all') { q += ' AND category=?'; p.push(category); }
+  q += ' ORDER BY order_index, id';
+  res.json(db.prepare(q).all(...p));
 });
 
 app.get('/api/testimonials', (req, res) => {
@@ -646,6 +668,23 @@ app.put('/api/admin/gallery/:id', auth, (req, res) => {
 });
 app.delete('/api/admin/gallery/:id', auth, (req, res) => {
   db.prepare('DELETE FROM gallery WHERE id=?').run(req.params.id);
+  res.json({ success: true });
+});
+
+// Cars CRUD
+app.get('/api/admin/cars', auth, (req, res) => res.json(db.prepare('SELECT * FROM cars ORDER BY order_index,id').all()));
+app.post('/api/admin/cars', auth, (req, res) => {
+  const { name, description, seats, category, price_per_day, image, features, available } = req.body;
+  const r = db.prepare(`INSERT INTO cars (name,description,seats,category,price_per_day,image,features,available) VALUES (?,?,?,?,?,?,?,?)`).run(name, description, +seats||4, category||'economy', +price_per_day||0, image||null, features||null, available!==undefined?+available:1);
+  res.json({ id: r.lastInsertRowid });
+});
+app.put('/api/admin/cars/:id', auth, (req, res) => {
+  const { name, description, seats, category, price_per_day, image, features, available } = req.body;
+  db.prepare(`UPDATE cars SET name=?,description=?,seats=?,category=?,price_per_day=?,image=?,features=?,available=? WHERE id=?`).run(name, description, +seats||4, category||'economy', +price_per_day||0, image||null, features||null, +available, req.params.id);
+  res.json({ success: true });
+});
+app.delete('/api/admin/cars/:id', auth, (req, res) => {
+  db.prepare('DELETE FROM cars WHERE id=?').run(req.params.id);
   res.json({ success: true });
 });
 
