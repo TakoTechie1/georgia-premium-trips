@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin — Georgia Premium Trips</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,700;1,600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/admin.css" />
+</head>
+<body>
+
+<!-- ══ LOGIN ══════════════════════════════════════════════════════════════ -->
+<div id="login-page" class="login-page">
+  <div class="login-bg"></div>
+  <div class="login-card">
+    <div class="login-logo">🇬🇪 Georgia<em> Premium</em></div>
+    <h2>ადმინ პანელი</h2>
+    <p class="login-sub">შეიყვანეთ სერთიფიკატები</p>
+    <form id="login-form">
+      <div class="form-group">
+        <label><i class="fa-solid fa-user"></i> მომხმარებელი</label>
+        <input type="text" name="username" value="admin" required autocomplete="username" />
+      </div>
+      <div class="form-group">
+        <label><i class="fa-solid fa-lock"></i> პაროლი</label>
+        <div class="pw-wrap">
+          <input type="password" name="password" id="pw-input" required autocomplete="current-password" />
+          <button type="button" class="pw-toggle" id="pw-toggle"><i class="fa-solid fa-eye"></i></button>
+        </div>
+      </div>
+      <div id="login-error" class="login-error" style="display:none"></div>
+      <button type="submit" class="btn-login" id="login-btn">
+        <i class="fa-solid fa-right-to-bracket"></i> შესვლა
+      </button>
+    </form>
+    <div class="login-hint">ნაგულისხმევი: admin / georgia2025</div>
+  </div>
+</div>
+
+<!-- ══ ADMIN APP ══════════════════════════════════════════════════════════ -->
+<div id="admin-app" style="display:none">
+
+  <!-- Sidebar -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+      <div class="sidebar-logo">🇬🇪 <em>Admin</em></div>
+      <button class="sidebar-close" id="sidebar-close"><i class="fa-solid fa-xmark"></i></button>
+    </div>
+    <nav class="sidebar-nav">
+      <a href="#" class="nav-item active" data-page="dashboard">
+        <i class="fa-solid fa-chart-pie"></i> <span>Dashboard</span>
+      </a>
+      <a href="#" class="nav-item" data-page="tours">
+        <i class="fa-solid fa-map"></i> <span>ტურები</span>
+        <span class="nav-badge" id="tours-badge"></span>
+      </a>
+      <a href="#" class="nav-item" data-page="bookings">
+        <i class="fa-solid fa-calendar-check"></i> <span>ჯავშნები</span>
+        <span class="nav-badge pending" id="bookings-badge"></span>
+      </a>
+      <a href="#" class="nav-item" data-page="messages">
+        <i class="fa-solid fa-envelope"></i> <span>შეტყობინებები</span>
+        <span class="nav-badge urgent" id="messages-badge"></span>
+      </a>
+      <a href="#" class="nav-item" data-page="testimonials">
+        <i class="fa-solid fa-star"></i> <span>შეფასებები</span>
+      </a>
+      <a href="#" class="nav-item" data-page="gallery">
+        <i class="fa-solid fa-images"></i> <span>გალერეა</span>
+      </a>
+      <a href="#" class="nav-item" data-page="settings">
+        <i class="fa-solid fa-gear"></i> <span>პარამეტრები</span>
+      </a>
+    </nav>
+    <div class="sidebar-footer">
+      <a href="/" target="_blank" class="sidebar-view-site">
+        <i class="fa-solid fa-globe"></i> საიტის ნახვა
+      </a>
+      <button id="logout-btn" class="sidebar-logout">
+        <i class="fa-solid fa-right-from-bracket"></i> გამოსვლა
+      </button>
+    </div>
+  </aside>
+
+  <!-- Main -->
+  <div class="admin-main">
+    <!-- Top Bar -->
+    <header class="admin-topbar">
+      <button class="topbar-menu" id="sidebar-toggle"><i class="fa-solid fa-bars"></i></button>
+      <h1 class="topbar-title" id="page-title">Dashboard</h1>
+      <div class="topbar-actions">
+        <span class="topbar-user"><i class="fa-solid fa-user-circle"></i> <span id="admin-username">admin</span></span>
+        <a href="/" target="_blank" class="topbar-btn"><i class="fa-solid fa-external-link"></i></a>
+      </div>
+    </header>
+
+    <!-- Pages -->
+    <div class="admin-content" id="admin-content">
+
+      <!-- ─── DASHBOARD ──────────────────────────────────────────────────── -->
+      <div id="page-dashboard" class="page active">
+        <div class="stats-grid">
+          <div class="stat-card gold">
+            <div class="stat-icon"><i class="fa-solid fa-map"></i></div>
+            <div class="stat-info"><div class="stat-num" id="stat-tours">—</div><div class="stat-label">აქტიური ტური</div></div>
+          </div>
+          <div class="stat-card blue">
+            <div class="stat-icon"><i class="fa-solid fa-calendar-check"></i></div>
+            <div class="stat-info"><div class="stat-num" id="stat-bookings">—</div><div class="stat-label">სულ ჯავშნები</div></div>
+          </div>
+          <div class="stat-card red">
+            <div class="stat-icon"><i class="fa-solid fa-clock"></i></div>
+            <div class="stat-info"><div class="stat-num" id="stat-pending">—</div><div class="stat-label">მოლოდინში</div></div>
+          </div>
+          <div class="stat-card green">
+            <div class="stat-icon"><i class="fa-solid fa-dollar-sign"></i></div>
+            <div class="stat-info"><div class="stat-num" id="stat-revenue">—</div><div class="stat-label">შემოსავალი ($)</div></div>
+          </div>
+          <div class="stat-card purple">
+            <div class="stat-icon"><i class="fa-solid fa-envelope"></i></div>
+            <div class="stat-info"><div class="stat-num" id="stat-unread">—</div><div class="stat-label">წაუკითხავი</div></div>
+          </div>
+          <div class="stat-card teal">
+            <div class="stat-icon"><i class="fa-solid fa-star"></i></div>
+            <div class="stat-info"><div class="stat-num" id="stat-testimonials">—</div><div class="stat-label">შეფასება</div></div>
+          </div>
+        </div>
+        <div class="dashboard-grid">
+          <div class="dash-card">
+            <div class="dash-card-header">
+              <h3>ბოლო ჯავშნები</h3>
+              <button class="btn-small" onclick="navigateTo('bookings')">ყველა</button>
+            </div>
+            <table class="mini-table" id="recent-bookings-table">
+              <thead><tr><th>სახელი</th><th>ტური</th><th>სტატუსი</th><th>თარიღი</th></tr></thead>
+              <tbody id="recent-bookings"></tbody>
+            </table>
+          </div>
+          <div class="dash-card">
+            <div class="dash-card-header">
+              <h3>ბოლო შეტყობინებები</h3>
+              <button class="btn-small" onclick="navigateTo('messages')">ყველა</button>
+            </div>
+            <table class="mini-table" id="recent-messages-table">
+              <thead><tr><th>სახელი</th><th>თემა</th><th>სტატუსი</th></tr></thead>
+              <tbody id="recent-messages"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- ─── TOURS ──────────────────────────────────────────────────────── -->
+      <div id="page-tours" class="page">
+        <div class="page-header">
+          <div>
+            <h2>ტურები</h2>
+            <p class="page-sub">ტურების მართვა — დამატება, რედაქტირება, წაშლა</p>
+          </div>
+          <button class="btn-add" id="add-tour-btn"><i class="fa-solid fa-plus"></i> ახალი ტური</button>
+        </div>
+        <div class="table-wrap">
+          <table class="data-table" id="tours-table">
+            <thead>
+              <tr>
+                <th>სახელი</th><th>კატეგორია</th><th>ხანგრძლ.</th>
+                <th>ფასი</th><th>სტატუსი</th><th>Featured</th><th>მოქმედება</th>
+              </tr>
+            </thead>
+            <tbody id="tours-tbody"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- ─── BOOKINGS ───────────────────────────────────────────────────── -->
+      <div id="page-bookings" class="page">
+        <div class="page-header">
+          <div>
+            <h2>ჯავშნები</h2>
+            <p class="page-sub">მომხმარებელთა ჯავშნების მართვა</p>
+          </div>
+          <div class="filter-row">
+            <select id="booking-status-filter" onchange="Admin.filterBookings()">
+              <option value="">ყველა სტატუსი</option>
+              <option value="pending">მოლოდინში</option>
+              <option value="confirmed">დადასტურებული</option>
+              <option value="cancelled">გაუქმებული</option>
+            </select>
+          </div>
+        </div>
+        <div class="table-wrap">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>რეფ.</th><th>სახელი</th><th>ტური</th><th>თარიღი</th>
+                <th>სტუმრები</th><th>ჯამი</th><th>სტატუსი</th><th>მოქმედება</th>
+              </tr>
+            </thead>
+            <tbody id="bookings-tbody"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- ─── MESSAGES ───────────────────────────────────────────────────── -->
+      <div id="page-messages" class="page">
+        <div class="page-header">
+          <div>
+            <h2>შეტყობინებები</h2>
+            <p class="page-sub">კონტაქტ ფორმის შეტყობინებები</p>
+          </div>
+        </div>
+        <div id="messages-list" class="messages-list"></div>
+      </div>
+
+      <!-- ─── TESTIMONIALS ───────────────────────────────────────────────── -->
+      <div id="page-testimonials" class="page">
+        <div class="page-header">
+          <div>
+            <h2>შეფასებები</h2>
+            <p class="page-sub">სტუმრების მიმოხილვები</p>
+          </div>
+          <button class="btn-add" id="add-test-btn"><i class="fa-solid fa-plus"></i> ახალი</button>
+        </div>
+        <div class="testimonials-grid" id="testimonials-grid"></div>
+      </div>
+
+      <!-- ─── GALLERY ────────────────────────────────────────────────────── -->
+      <div id="page-gallery" class="page">
+        <div class="page-header">
+          <div>
+            <h2>გალერეა</h2>
+            <p class="page-sub">ფოტოების მართვა</p>
+          </div>
+          <button class="btn-add" id="add-photo-btn"><i class="fa-solid fa-plus"></i> ახალი ფოტო</button>
+        </div>
+        <div class="gallery-admin-grid" id="gallery-admin-grid"></div>
+      </div>
+
+      <!-- ─── SETTINGS ───────────────────────────────────────────────────── -->
+      <div id="page-settings" class="page">
+        <div class="page-header">
+          <div>
+            <h2>პარამეტრები</h2>
+            <p class="page-sub">საიტის კონფიგურაცია</p>
+          </div>
+        </div>
+        <div class="settings-grid">
+          <div class="settings-section">
+            <h3><i class="fa-solid fa-globe"></i> ძირითადი</h3>
+            <form id="settings-form">
+              <div class="form-group"><label>საიტის სახელი</label><input type="text" name="site_title" /></div>
+              <div class="form-group"><label>სლოგანი</label><input type="text" name="site_subtitle" /></div>
+              <div class="form-group"><label>Tagline</label><input type="text" name="tagline" /></div>
+              <div class="form-group"><label>ტელეფონი</label><input type="tel" name="phone" /></div>
+              <div class="form-group"><label>ელ-ფოსტა</label><input type="email" name="email" /></div>
+              <div class="form-group"><label>მისამართი</label><input type="text" name="address" /></div>
+              <div class="form-group"><label>WhatsApp</label><input type="text" name="whatsapp" /></div>
+              <div class="form-group"><label>Instagram</label><input type="text" name="instagram" /></div>
+              <div class="form-group"><label>Facebook</label><input type="text" name="facebook" /></div>
+              <div class="form-group"><label>განცხადების ბანერი</label><input type="text" name="announcement" placeholder="დატოვეთ ცარიელი გამოსართავად" /></div>
+              <button type="submit" class="btn-save"><i class="fa-solid fa-floppy-disk"></i> შენახვა</button>
+            </form>
+          </div>
+          <div class="settings-section">
+            <h3><i class="fa-solid fa-lock"></i> პაროლის შეცვლა</h3>
+            <form id="password-form">
+              <div class="form-group"><label>მიმდინარე პაროლი</label><input type="password" name="current" required /></div>
+              <div class="form-group"><label>ახალი პაროლი</label><input type="password" name="newpass" required minlength="6" /></div>
+              <div class="form-group"><label>გაიმეორე</label><input type="password" name="confirm" required /></div>
+              <button type="submit" class="btn-save"><i class="fa-solid fa-key"></i> შეცვლა</button>
+            </form>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /admin-content -->
+  </div><!-- /admin-main -->
+</div><!-- /admin-app -->
+
+<!-- ══ MODALS ══════════════════════════════════════════════════════════════ -->
+
+<!-- Tour Form Modal -->
+<div id="tour-form-modal" class="modal-bg">
+  <div class="modal-card">
+    <div class="modal-header">
+      <h3 id="tour-modal-title">ახალი ტური</h3>
+      <button class="modal-x" onclick="Admin.closeTourModal()"><i class="fa-solid fa-xmark"></i></button>
+    </div>
+    <form id="tour-form">
+      <input type="hidden" name="id" />
+      <div class="modal-body">
+        <div class="form-row-2">
+          <div class="form-group"><label>სახელი *</label><input type="text" name="name" required /></div>
+          <div class="form-group"><label>კატეგორია</label>
+            <select name="category">
+              <option value="city">ქალაქი</option>
+              <option value="adventure">მთა/Adventure</option>
+              <option value="cultural">კულტურა</option>
+              <option value="beach">ზღვა/Beach</option>
+              <option value="premium">Premium VIP</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-group"><label>მოკლე აღწერა</label><input type="text" name="short_description" /></div>
+        <div class="form-group"><label>სრული აღწერა</label><textarea name="description" rows="4"></textarea></div>
+        <div class="form-row-2">
+          <div class="form-group"><label>ხანგრძლ.</label><input type="text" name="duration" placeholder="2 დღე" /></div>
+          <div class="form-group"><label>სირთულე</label>
+            <select name="difficulty"><option>Easy</option><option>Moderate</option><option>Hard</option></select>
+          </div>
+        </div>
+        <div class="form-row-2">
+          <div class="form-group"><label>ფასი ($) *</label><input type="number" name="price" required /></div>
+          <div class="form-group"><label>ოდ. ფასი ($)</label><input type="number" name="original_price" /></div>
+        </div>
+        <div class="form-row-2">
+          <div class="form-group"><label>მაქს. ჯგუფი</label><input type="number" name="max_group" value="12" /></div>
+          <div class="form-group">
+            <label>სტატუსი</label>
+            <select name="active"><option value="1">აქტიური</option><option value="0">არააქტიური</option></select>
+          </div>
+        </div>
+        <div class="form-group"><label>ფოტო URL</label><input type="url" name="image" placeholder="https://..." /></div>
+        <div class="form-group"><label>ჩართულია (მძიმით)</label><input type="text" name="included" placeholder="ტრანსპორტი,გიდი,სადილი" /></div>
+        <div class="form-group"><label>ძირ. ადგილები (მძიმით)</label><input type="text" name="highlights" placeholder="ნარიყალა,მეტეხი" /></div>
+        <div class="form-row-2">
+          <label class="checkbox-label">
+            <input type="checkbox" name="featured" value="1" />
+            <span>Featured / გამორჩეული</span>
+          </label>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn-cancel" onclick="Admin.closeTourModal()">გაუქმება</button>
+        <button type="submit" class="btn-save"><i class="fa-solid fa-floppy-disk"></i> შენახვა</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Testimonial Form Modal -->
+<div id="test-form-modal" class="modal-bg">
+  <div class="modal-card">
+    <div class="modal-header">
+      <h3>შეფასება</h3>
+      <button class="modal-x" onclick="Admin.closeTestModal()"><i class="fa-solid fa-xmark"></i></button>
+    </div>
+    <form id="test-form">
+      <input type="hidden" name="id" />
+      <div class="modal-body">
+        <div class="form-row-2">
+          <div class="form-group"><label>სახელი *</label><input type="text" name="name" required /></div>
+          <div class="form-group"><label>ქვეყანა</label><input type="text" name="country" /></div>
+        </div>
+        <div class="form-row-2">
+          <div class="form-group"><label>დროშა (emoji)</label><input type="text" name="flag" placeholder="🇺🇸" /></div>
+          <div class="form-group"><label>რეიტინგი</label>
+            <select name="rating"><option>5</option><option>4</option><option>3</option><option>2</option><option>1</option></select>
+          </div>
+        </div>
+        <div class="form-group"><label>ტური</label><input type="text" name="tour_name" /></div>
+        <div class="form-group"><label>ტექსტი *</label><textarea name="text" rows="4" required></textarea></div>
+        <div class="form-row-2">
+          <label class="checkbox-label"><input type="checkbox" name="approved" value="1" checked /><span>Approved</span></label>
+          <label class="checkbox-label"><input type="checkbox" name="featured" value="1" /><span>Featured</span></label>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn-cancel" onclick="Admin.closeTestModal()">გაუქმება</button>
+        <button type="submit" class="btn-save"><i class="fa-solid fa-floppy-disk"></i> შენახვა</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Gallery Add Modal -->
+<div id="gallery-form-modal" class="modal-bg">
+  <div class="modal-card" style="max-width:480px">
+    <div class="modal-header">
+      <h3>ფოტოს დამატება</h3>
+      <button class="modal-x" onclick="Admin.closeGalleryModal()"><i class="fa-solid fa-xmark"></i></button>
+    </div>
+    <form id="gallery-form">
+      <input type="hidden" name="id" />
+      <div class="modal-body">
+        <div class="form-group"><label>სათაური</label><input type="text" name="title" /></div>
+        <div class="form-group"><label>ფოტო URL *</label><input type="url" name="image" required placeholder="https://..." /></div>
+        <div class="gallery-img-preview" id="gallery-preview"></div>
+        <div class="form-group"><label>კატეგორია</label>
+          <select name="category">
+            <option value="mountains">Mountains</option>
+            <option value="city">City</option>
+            <option value="nature">Nature</option>
+            <option value="cultural">Cultural</option>
+            <option value="beach">Beach</option>
+            <option value="food">Food</option>
+          </select>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn-cancel" onclick="Admin.closeGalleryModal()">გაუქმება</button>
+        <button type="submit" class="btn-save">შენახვა</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Booking Detail Modal -->
+<div id="booking-detail-modal" class="modal-bg">
+  <div class="modal-card" style="max-width:560px">
+    <div class="modal-header">
+      <h3>ჯავშნის დეტალი</h3>
+      <button class="modal-x" onclick="Admin.closeBookingModal()"><i class="fa-solid fa-xmark"></i></button>
+    </div>
+    <div class="modal-body" id="booking-detail-body"></div>
+    <div class="modal-footer" id="booking-detail-footer"></div>
+  </div>
+</div>
+
+<!-- Message Detail Modal -->
+<div id="message-detail-modal" class="modal-bg">
+  <div class="modal-card" style="max-width:560px">
+    <div class="modal-header">
+      <h3>შეტყობინება</h3>
+      <button class="modal-x" onclick="Admin.closeMessageModal()"><i class="fa-solid fa-xmark"></i></button>
+    </div>
+    <div class="modal-body" id="message-detail-body"></div>
+    <div class="modal-footer" id="message-detail-footer"></div>
+  </div>
+</div>
+
+<!-- Toast -->
+<div id="admin-toast" class="admin-toast"></div>
+
+<script src="js/admin.js"></script>
+</body>
+</html>

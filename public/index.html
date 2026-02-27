@@ -1,0 +1,738 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Georgia Premium Trips — Discover Georgia in Style</title>
+  <meta name="description" content="Premium luxury tours in Georgia. Kazbegi, Tbilisi, Kakheti, Svaneti, Batumi. Professional guides, VIP transport, unforgettable experiences." />
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700;800&family=DM+Sans:wght@300;400;500;600&family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet" />
+
+  <!-- Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+
+  <!-- Swiper -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
+
+  <!-- AOS -->
+  <link rel="stylesheet" href="https://unpkg.com/aos@2.3.4/dist/aos.css" />
+
+  <!-- Custom CSS -->
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+
+<!-- ══ LOADER ══════════════════════════════════════════════════════════════ -->
+<div id="page-loader">
+  <div class="loader-content">
+    <div class="loader-cross">
+      <span></span><span></span><span></span><span></span>
+    </div>
+    <div class="loader-text">Georgia Premium Trips</div>
+    <div class="loader-bar"><div class="loader-bar-fill"></div></div>
+  </div>
+</div>
+
+<!-- ══ CURSOR ══════════════════════════════════════════════════════════════ -->
+<div id="cursor-ring"></div>
+<div id="cursor-dot"></div>
+
+<!-- ══ SOUND TOGGLE ════════════════════════════════════════════════════════ -->
+<button id="sound-toggle" title="Toggle Sound">
+  <i class="fa-solid fa-volume-xmark" id="sound-icon"></i>
+</button>
+
+<!-- ══ NAVBAR ══════════════════════════════════════════════════════════════ -->
+<nav id="navbar">
+  <div class="nav-container">
+    <a href="#hero" class="nav-logo">
+      <span class="logo-geo">🇬🇪</span>
+      <span class="logo-text">Georgia <em>Premium</em></span>
+    </a>
+
+    <ul class="nav-links" id="nav-links">
+      <li><a href="#tours" class="nav-link">ტურები</a></li>
+      <li><a href="#destinations" class="nav-link">მიმართულებები</a></li>
+      <li><a href="#gallery" class="nav-link">გალერეა</a></li>
+      <li><a href="#about" class="nav-link">ჩვენ შესახებ</a></li>
+      <li><a href="#contact" class="nav-link">კონტაქტი</a></li>
+    </ul>
+
+    <div class="nav-actions">
+      <a href="tel:+995555100200" class="nav-phone">
+        <i class="fa-solid fa-phone"></i> +995 555 100 200
+      </a>
+      <a href="#booking" class="btn btn-primary btn-sm nav-cta">დაჯავშნე</a>
+    </div>
+
+    <button class="hamburger" id="hamburger" aria-label="Menu">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+
+  <!-- Mobile Menu -->
+  <div class="mobile-menu" id="mobile-menu">
+    <a href="#tours" class="mob-link">ტურები</a>
+    <a href="#destinations" class="mob-link">მიმართულებები</a>
+    <a href="#gallery" class="mob-link">გალერეა</a>
+    <a href="#about" class="mob-link">ჩვენ შესახებ</a>
+    <a href="#contact" class="mob-link">კონტაქტი</a>
+    <a href="#booking" class="btn btn-primary mob-cta">დაჯავშნე ახლავე</a>
+    <a href="tel:+995555100200" class="mob-phone"><i class="fa-solid fa-phone"></i> +995 555 100 200</a>
+  </div>
+</nav>
+
+<!-- ══ HERO ═════════════════════════════════════════════════════════════════ -->
+<section id="hero">
+  <canvas id="particles-canvas"></canvas>
+
+  <!-- Background Slideshow -->
+  <div class="hero-slides" id="hero-slides">
+    <div class="hero-slide active" style="background-image:url('https://images.unsplash.com/photo-1565008576549-57569a49371d?auto=format&fit=crop&w=1920&q=80')"></div>
+    <div class="hero-slide" style="background-image:url('https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=1920&q=80')"></div>
+    <div class="hero-slide" style="background-image:url('https://images.unsplash.com/photo-1476514525535-07fb3b4ae5f1?auto=format&fit=crop&w=1920&q=80')"></div>
+    <div class="hero-slide" style="background-image:url('https://images.unsplash.com/photo-1506905925346-21bda4d32df4?auto=format&fit=crop&w=1920&q=80')"></div>
+  </div>
+  <div class="hero-overlay"></div>
+
+  <!-- Hero Content -->
+  <div class="hero-content">
+    <span class="hero-badge" data-aos="fade-down" data-aos-delay="200">
+      <i class="fa-solid fa-star"></i> Premium Luxury Travel
+    </span>
+
+    <h1 class="hero-title" data-aos="fade-up" data-aos-delay="400">
+      <span class="hero-title-line">Discover</span>
+      <span class="hero-title-accent">Georgia</span>
+      <span class="hero-title-line">in Style</span>
+    </h1>
+
+    <p class="hero-subtitle" data-aos="fade-up" data-aos-delay="600">
+      Where ancient history meets breathtaking nature.<br>
+      <span id="hero-typewriter"></span>
+    </p>
+
+    <div class="hero-ctas" data-aos="fade-up" data-aos-delay="800">
+      <a href="#tours" class="btn btn-gold btn-lg">
+        <i class="fa-solid fa-compass"></i> ტურების ნახვა
+      </a>
+      <a href="#booking" class="btn btn-outline btn-lg">
+        <i class="fa-solid fa-calendar-check"></i> დაჯავშნე ახლა
+      </a>
+    </div>
+
+    <!-- Hero Stats -->
+    <div class="hero-stats" data-aos="fade-up" data-aos-delay="1000">
+      <div class="hero-stat">
+        <span class="hero-stat-num" data-count="2400">0</span><span>+</span>
+        <span class="hero-stat-label">ბედნიერი სტუმარი</span>
+      </div>
+      <div class="hero-stat-divider"></div>
+      <div class="hero-stat">
+        <span class="hero-stat-num" data-count="12">0</span>
+        <span class="hero-stat-label">წლის გამოცდილება</span>
+      </div>
+      <div class="hero-stat-divider"></div>
+      <div class="hero-stat">
+        <span class="hero-stat-num" data-count="50">0</span><span>+</span>
+        <span class="hero-stat-label">უნიკალური ტური</span>
+      </div>
+      <div class="hero-stat-divider"></div>
+      <div class="hero-stat">
+        <span class="hero-stat-num">4.9</span><span>★</span>
+        <span class="hero-stat-label">საშ. შეფასება</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Slide Indicators -->
+  <div class="hero-indicators" id="hero-indicators">
+    <button class="indicator active"></button>
+    <button class="indicator"></button>
+    <button class="indicator"></button>
+    <button class="indicator"></button>
+  </div>
+
+  <!-- Slide Caption -->
+  <div class="hero-caption" id="hero-caption">გერგეთის სამება, ყაზბეგი</div>
+
+  <!-- Scroll Down -->
+  <a href="#tours" class="hero-scroll-down">
+    <span>გადახვიე</span>
+    <div class="scroll-wheel"><div class="scroll-dot"></div></div>
+  </a>
+
+  <!-- SVG Mountains -->
+  <div class="hero-mountains">
+    <svg viewBox="0 0 1440 200" preserveAspectRatio="none">
+      <path d="M0,200 L0,120 L80,80 L160,110 L280,40 L360,80 L440,50 L520,90 L640,20 L720,60 L800,30 L900,70 L1000,40 L1100,80 L1200,50 L1320,90 L1440,60 L1440,200 Z" fill="rgba(10,10,10,0.7)"/>
+      <path d="M0,200 L0,150 L120,120 L240,140 L360,100 L480,130 L600,90 L720,120 L840,80 L960,110 L1080,90 L1200,120 L1320,100 L1440,130 L1440,200 Z" fill="rgba(10,10,10,0.5)"/>
+      <path d="M0,200 L0,180 L240,160 L480,170 L720,150 L960,165 L1200,155 L1440,170 L1440,200 Z" fill="#0a0a0a"/>
+    </svg>
+  </div>
+</section>
+
+<!-- ══ ANNOUNCEMENT BANNER ══════════════════════════════════════════════════ -->
+<div id="announcement-bar" style="display:none">
+  <span id="announcement-text"></span>
+  <button onclick="document.getElementById('announcement-bar').style.display='none'">✕</button>
+</div>
+
+<!-- ══ TOURS ════════════════════════════════════════════════════════════════ -->
+<section id="tours" class="section">
+  <div class="container">
+    <div class="section-header" data-aos="fade-up">
+      <span class="section-tag">ჩვენი ტურები</span>
+      <h2 class="section-title">პრემიუმ <em>მარშრუტები</em></h2>
+      <p class="section-subtitle">6 განუმეორებელი ტური — საქართველოს ყველა სიამოვნება ერთ ადგილზე</p>
+    </div>
+
+    <!-- Filter Tabs -->
+    <div class="tour-filters" data-aos="fade-up" data-aos-delay="100">
+      <button class="filter-btn active" data-filter="all">ყველა</button>
+      <button class="filter-btn" data-filter="city">ქალაქი</button>
+      <button class="filter-btn" data-filter="adventure">მთა</button>
+      <button class="filter-btn" data-filter="cultural">კულტურა</button>
+      <button class="filter-btn" data-filter="beach">ზღვა</button>
+      <button class="filter-btn" data-filter="premium">VIP</button>
+    </div>
+
+    <!-- Tours Swiper -->
+    <div class="swiper tours-swiper" data-aos="fade-up" data-aos-delay="200">
+      <div class="swiper-wrapper" id="tours-wrapper">
+        <!-- Tours loaded by JS -->
+        <div class="swiper-slide tour-skeleton">
+          <div class="sk-img"></div><div class="sk-content"><div class="sk-line"></div><div class="sk-line short"></div><div class="sk-line"></div></div>
+        </div>
+        <div class="swiper-slide tour-skeleton">
+          <div class="sk-img"></div><div class="sk-content"><div class="sk-line"></div><div class="sk-line short"></div><div class="sk-line"></div></div>
+        </div>
+        <div class="swiper-slide tour-skeleton">
+          <div class="sk-img"></div><div class="sk-content"><div class="sk-line"></div><div class="sk-line short"></div><div class="sk-line"></div></div>
+        </div>
+      </div>
+      <div class="swiper-pagination tours-pagination"></div>
+      <div class="swiper-button-next tours-next"><i class="fa-solid fa-chevron-right"></i></div>
+      <div class="swiper-button-prev tours-prev"><i class="fa-solid fa-chevron-left"></i></div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ TOUR MODAL ══════════════════════════════════════════════════════════ -->
+<div id="tour-modal" class="modal-overlay">
+  <div class="modal-box">
+    <button class="modal-close" id="modal-close"><i class="fa-solid fa-xmark"></i></button>
+    <div id="modal-content"></div>
+  </div>
+</div>
+
+<!-- ══ DESTINATIONS ════════════════════════════════════════════════════════ -->
+<section id="destinations" class="section section-dark">
+  <div class="container">
+    <div class="section-header" data-aos="fade-up">
+      <span class="section-tag">მიმართულებები</span>
+      <h2 class="section-title">საქართველოს <em>საოცრებები</em></h2>
+      <p class="section-subtitle">მთებიდან ზღვამდე — ყველა კუთხე უნიკალური და განუმეორებელია</p>
+    </div>
+    <div class="destinations-grid">
+      <div class="dest-card dest-large" data-aos="fade-right" data-aos-delay="100">
+        <div class="dest-img" style="background-image:url('https://images.unsplash.com/photo-1565008576549-57569a49371d?auto=format&fit=crop&w=800&q=80')"></div>
+        <div class="dest-overlay">
+          <div class="dest-info">
+            <span class="dest-tag">მთა</span>
+            <h3>ყაზბეგი</h3>
+            <p>კავკასიონის ყველაზე ლამაზი მთიანი პეიზაჟი</p>
+            <span class="dest-tours">2 ტური</span>
+          </div>
+        </div>
+      </div>
+      <div class="dest-card" data-aos="fade-up" data-aos-delay="150">
+        <div class="dest-img" style="background-image:url('https://images.unsplash.com/photo-1556566464-14f16d840f0e?auto=format&fit=crop&w=600&q=80')"></div>
+        <div class="dest-overlay">
+          <div class="dest-info">
+            <span class="dest-tag">ქალაქი</span>
+            <h3>თბილისი</h3>
+            <p>1600 წლის ისტორია</p>
+            <span class="dest-tours">3 ტური</span>
+          </div>
+        </div>
+      </div>
+      <div class="dest-card" data-aos="fade-left" data-aos-delay="200">
+        <div class="dest-img" style="background-image:url('https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=600&q=80')"></div>
+        <div class="dest-overlay">
+          <div class="dest-info">
+            <span class="dest-tag">UNESCO</span>
+            <h3>სვანეთი</h3>
+            <p>შუა საუკუნეების კოშკები</p>
+            <span class="dest-tours">2 ტური</span>
+          </div>
+        </div>
+      </div>
+      <div class="dest-card" data-aos="fade-right" data-aos-delay="250">
+        <div class="dest-img" style="background-image:url('https://images.unsplash.com/photo-1506905925346-21bda4d32df4?auto=format&fit=crop&w=600&q=80')"></div>
+        <div class="dest-overlay">
+          <div class="dest-info">
+            <span class="dest-tag">ღვინო</span>
+            <h3>კახეთი</h3>
+            <p>8000 წლის ღვინის ტრადიცია</p>
+            <span class="dest-tours">2 ტური</span>
+          </div>
+        </div>
+      </div>
+      <div class="dest-card dest-large-right" data-aos="fade-left" data-aos-delay="300">
+        <div class="dest-img" style="background-image:url('https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=800&q=80')"></div>
+        <div class="dest-overlay">
+          <div class="dest-info">
+            <span class="dest-tag">ზღვა</span>
+            <h3>ბათუმი</h3>
+            <p>შავი ზღვის მარგალიტი</p>
+            <span class="dest-tours">2 ტური</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ WHY US ═══════════════════════════════════════════════════════════════ -->
+<section id="about" class="section">
+  <div class="container">
+    <div class="section-header" data-aos="fade-up">
+      <span class="section-tag">რატომ ჩვენ</span>
+      <h2 class="section-title">პრემიუმ <em>სერვისი</em></h2>
+      <p class="section-subtitle">12 წელია ვქმნით განუმეორებელ გამოცდილებებს — ეს ჩვენი ვნება და მისიაა</p>
+    </div>
+    <div class="features-grid">
+      <div class="feature-card" data-aos="fade-up" data-aos-delay="100">
+        <div class="feature-icon"><i class="fa-solid fa-car-side"></i></div>
+        <h3>VIP ტრანსპორტი</h3>
+        <p>Mercedes, Toyota Land Cruiser — კომფორტული, WiFi-ით, კონდიციონერით. მხოლოდ პრემიუმ მანქანები.</p>
+      </div>
+      <div class="feature-card" data-aos="fade-up" data-aos-delay="150">
+        <div class="feature-icon"><i class="fa-solid fa-user-tie"></i></div>
+        <h3>ექსპერტი გიდები</h3>
+        <p>სერტიფიცირებული, ბილინგვური გიდები — ინგლისური, გერმანული, ფრანგული, რუსული. ისტორიის ვნებიანი მოყვარულები.</p>
+      </div>
+      <div class="feature-card" data-aos="fade-up" data-aos-delay="200">
+        <div class="feature-icon"><i class="fa-solid fa-hotel"></i></div>
+        <h3>5★ სასტუმრო</h3>
+        <p>ყველა ტური მოიცავს საუკეთესო სასტუმროებს — ბუტიკ სასტუმრო თბილისში, მთის ლოჯი ყაზბეგში.</p>
+      </div>
+      <div class="feature-card" data-aos="fade-up" data-aos-delay="250">
+        <div class="feature-icon"><i class="fa-solid fa-utensils"></i></div>
+        <h3>ქართული სამზარეულო</h3>
+        <p>ყველა კვება ჩართულია — ხინკალი, ხაჭაპური, მწვადი, ადგილობრივი ღვინო. ავთენტური სასადილოები.</p>
+      </div>
+      <div class="feature-card" data-aos="fade-up" data-aos-delay="300">
+        <div class="feature-icon"><i class="fa-solid fa-shield-halved"></i></div>
+        <h3>სრული უსაფრთხოება</h3>
+        <p>GPS ტრეკინგი, 24/7 სამედიცინო დახმარება, სადაზღვევო პარტნიორობა. თქვენი უსაფრთხოება — ჩვენი პრიორიტეტი.</p>
+      </div>
+      <div class="feature-card" data-aos="fade-up" data-aos-delay="350">
+        <div class="feature-icon"><i class="fa-solid fa-headset"></i></div>
+        <h3>24/7 მხარდაჭერა</h3>
+        <p>დღე-ღამე ხელმისაწვდომი ვართ. WhatsApp, ზარი, ელ-ფოსტა — ნებისმიერ კითხვაზე 1 საათში ვპასუხობთ.</p>
+      </div>
+    </div>
+
+    <!-- About Stats -->
+    <div class="about-strip" data-aos="fade-up" data-aos-delay="100">
+      <div class="about-strip-item">
+        <div class="big-num" data-count="2400">0</div>
+        <div class="big-label">ბედნიერი სტუმარი</div>
+      </div>
+      <div class="about-strip-item">
+        <div class="big-num" data-count="12">0</div>
+        <div class="big-label">წლის გამოცდილება</div>
+      </div>
+      <div class="about-strip-item">
+        <div class="big-num" data-count="50">0</div>
+        <div class="big-label">ტური და მარშრუტი</div>
+      </div>
+      <div class="about-strip-item">
+        <div class="big-num" data-count="30">0</div>
+        <div class="big-label">ქვეყნიდან სტუმარი</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ TESTIMONIALS ════════════════════════════════════════════════════════ -->
+<section id="testimonials" class="section section-dark">
+  <div class="container">
+    <div class="section-header" data-aos="fade-up">
+      <span class="section-tag">შეფასებები</span>
+      <h2 class="section-title">სტუმართა <em>გამოხმაურება</em></h2>
+      <div class="rating-summary">
+        <div class="stars-big">★★★★★</div>
+        <div class="rating-text"><strong>4.9/5</strong> — 200+ შეფასება</div>
+      </div>
+    </div>
+
+    <div class="swiper testimonials-swiper" data-aos="fade-up" data-aos-delay="200">
+      <div class="swiper-wrapper" id="testimonials-wrapper">
+        <!-- Loaded by JS -->
+      </div>
+      <div class="swiper-pagination testimonials-pagination"></div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ GALLERY ══════════════════════════════════════════════════════════════ -->
+<section id="gallery" class="section">
+  <div class="container">
+    <div class="section-header" data-aos="fade-up">
+      <span class="section-tag">გალერეა</span>
+      <h2 class="section-title">საქართველოს <em>სილამაზე</em></h2>
+      <p class="section-subtitle">ჩვენი ტურების ფოტოები — ბუნება, კულტურა, ემოცია</p>
+    </div>
+
+    <!-- Gallery Filters -->
+    <div class="gallery-filters" data-aos="fade-up" data-aos-delay="100">
+      <button class="gal-filter active" data-cat="all">ყველა</button>
+      <button class="gal-filter" data-cat="mountains">მთები</button>
+      <button class="gal-filter" data-cat="city">ქალაქი</button>
+      <button class="gal-filter" data-cat="nature">ბუნება</button>
+      <button class="gal-filter" data-cat="cultural">კულტურა</button>
+      <button class="gal-filter" data-cat="food">სამზარეულო</button>
+    </div>
+
+    <div class="gallery-grid" id="gallery-grid" data-aos="fade-up" data-aos-delay="200">
+      <!-- Loaded by JS -->
+    </div>
+  </div>
+</section>
+
+<!-- Lightbox -->
+<div id="lightbox" class="lightbox-overlay">
+  <button class="lightbox-close" id="lightbox-close"><i class="fa-solid fa-xmark"></i></button>
+  <button class="lightbox-prev" id="lightbox-prev"><i class="fa-solid fa-chevron-left"></i></button>
+  <button class="lightbox-next" id="lightbox-next"><i class="fa-solid fa-chevron-right"></i></button>
+  <div class="lightbox-content">
+    <img id="lightbox-img" src="" alt="" />
+    <div id="lightbox-caption"></div>
+  </div>
+</div>
+
+<!-- ══ BOOKING ══════════════════════════════════════════════════════════════ -->
+<section id="booking" class="section section-gold">
+  <div class="container">
+    <div class="booking-wrapper">
+      <div class="booking-info" data-aos="fade-right">
+        <span class="section-tag">დაჯავშნე</span>
+        <h2>დაიწყეთ თქვენი<br><em>საქართველოს თავგადასავალი</em></h2>
+        <p>შეავსეთ ფორმა და ჩვენ 2 საათში დაგიკავშირდებით. ყველა ტური ინდივიდუალურად მორგებულია.</p>
+        <ul class="booking-perks">
+          <li><i class="fa-solid fa-check"></i> უფასო კონსულტაცია</li>
+          <li><i class="fa-solid fa-check"></i> გარანტირებული ფასი</li>
+          <li><i class="fa-solid fa-check"></i> მოქნილი გაუქმება</li>
+          <li><i class="fa-solid fa-check"></i> ყველა შეკითხვა 1 საათში</li>
+        </ul>
+        <div class="booking-contact-quick">
+          <a href="https://wa.me/995555100200" target="_blank" class="quick-contact-btn whatsapp">
+            <i class="fa-brands fa-whatsapp"></i> WhatsApp
+          </a>
+          <a href="tel:+995555100200" class="quick-contact-btn phone">
+            <i class="fa-solid fa-phone"></i> დარეკე
+          </a>
+        </div>
+      </div>
+
+      <div class="booking-form-wrapper" data-aos="fade-left">
+        <!-- Steps -->
+        <div class="form-steps">
+          <div class="step active" data-step="1"><span>1</span> ტური</div>
+          <div class="step-line"></div>
+          <div class="step" data-step="2"><span>2</span> მონაცემები</div>
+          <div class="step-line"></div>
+          <div class="step" data-step="3"><span>3</span> დეტალი</div>
+        </div>
+
+        <form id="booking-form" novalidate>
+          <!-- Step 1 -->
+          <div class="form-step active" id="step-1">
+            <h3>აირჩიეთ ტური</h3>
+            <div class="form-group">
+              <label>ტური *</label>
+              <select name="tour_id" id="booking-tour" required>
+                <option value="">— ტურის არჩევა —</option>
+              </select>
+            </div>
+            <div class="tour-preview" id="tour-preview" style="display:none"></div>
+            <button type="button" class="btn btn-gold btn-full next-step" data-to="2">გაგრძელება <i class="fa-solid fa-arrow-right"></i></button>
+          </div>
+
+          <!-- Step 2 -->
+          <div class="form-step" id="step-2">
+            <h3>თქვენი მონაცემები</h3>
+            <div class="form-row">
+              <div class="form-group">
+                <label>სახელი, გვარი *</label>
+                <input type="text" name="name" placeholder="John Smith" required />
+              </div>
+              <div class="form-group">
+                <label>ელ-ფოსტა *</label>
+                <input type="email" name="email" placeholder="john@example.com" required />
+              </div>
+            </div>
+            <div class="form-group">
+              <label>ტელეფონი / WhatsApp</label>
+              <input type="tel" name="phone" placeholder="+995 555 000 000" />
+            </div>
+            <div class="form-btn-row">
+              <button type="button" class="btn btn-outline prev-step" data-to="1"><i class="fa-solid fa-arrow-left"></i> უკან</button>
+              <button type="button" class="btn btn-gold next-step" data-to="3">გაგრძელება <i class="fa-solid fa-arrow-right"></i></button>
+            </div>
+          </div>
+
+          <!-- Step 3 -->
+          <div class="form-step" id="step-3">
+            <h3>ტარიღი და დეტალები</h3>
+            <div class="form-row">
+              <div class="form-group">
+                <label>სასურველი თარიღი</label>
+                <input type="date" name="date" min="" />
+              </div>
+              <div class="form-group">
+                <label>სტუმრების რაოდენობა</label>
+                <div class="num-input">
+                  <button type="button" class="num-btn" data-action="minus">−</button>
+                  <input type="number" name="guests" value="2" min="1" max="20" readonly />
+                  <button type="button" class="num-btn" data-action="plus">+</button>
+                </div>
+              </div>
+            </div>
+            <div class="form-group">
+              <label>სპეციალური სურვილები</label>
+              <textarea name="special_requests" rows="3" placeholder="ვეგეტარიანული კვება, ბავშვები, სიმაღლის ფობია..."></textarea>
+            </div>
+            <div class="form-price-preview" id="form-price-preview"></div>
+            <div class="form-btn-row">
+              <button type="button" class="btn btn-outline prev-step" data-to="2"><i class="fa-solid fa-arrow-left"></i> უკან</button>
+              <button type="submit" class="btn btn-gold">
+                <i class="fa-solid fa-paper-plane"></i> განაცხადის გაგზავნა
+              </button>
+            </div>
+          </div>
+
+          <!-- Success -->
+          <div class="form-step" id="step-success" style="display:none; text-align:center; padding:40px 20px">
+            <div class="success-icon">✅</div>
+            <h3>წარმატება!</h3>
+            <p id="booking-success-msg"></p>
+            <p style="opacity:0.7; margin-top:8px">სარეზერვო კოდი: <strong id="booking-ref"></strong></p>
+            <button type="button" class="btn btn-gold" onclick="resetBookingForm()">ახალი განაცხადი</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ CONTACT ══════════════════════════════════════════════════════════════ -->
+<section id="contact" class="section section-dark">
+  <div class="container">
+    <div class="section-header" data-aos="fade-up">
+      <span class="section-tag">კონტაქტი</span>
+      <h2 class="section-title">დაგვიკავშირდით <em>ახლავე</em></h2>
+    </div>
+
+    <div class="contact-grid">
+      <!-- Info -->
+      <div class="contact-info" data-aos="fade-right">
+        <div class="contact-card">
+          <div class="contact-item">
+            <div class="contact-icon"><i class="fa-solid fa-phone"></i></div>
+            <div>
+              <h4>ტელეფონი</h4>
+              <a href="tel:+995555100200">+995 555 100 200</a>
+            </div>
+          </div>
+          <div class="contact-item">
+            <div class="contact-icon"><i class="fa-brands fa-whatsapp"></i></div>
+            <div>
+              <h4>WhatsApp</h4>
+              <a href="https://wa.me/995555100200" target="_blank">+995 555 100 200</a>
+            </div>
+          </div>
+          <div class="contact-item">
+            <div class="contact-icon"><i class="fa-solid fa-envelope"></i></div>
+            <div>
+              <h4>ელ-ფოსტა</h4>
+              <a href="mailto:info@georgiatrips.ge">info@georgiatrips.ge</a>
+            </div>
+          </div>
+          <div class="contact-item">
+            <div class="contact-icon"><i class="fa-solid fa-location-dot"></i></div>
+            <div>
+              <h4>მისამართი</h4>
+              <span>რუსთაველის 42, თბილისი 0108</span>
+            </div>
+          </div>
+          <div class="contact-social">
+            <a href="#" class="social-btn" target="_blank"><i class="fa-brands fa-instagram"></i></a>
+            <a href="#" class="social-btn" target="_blank"><i class="fa-brands fa-facebook"></i></a>
+            <a href="#" class="social-btn" target="_blank"><i class="fa-brands fa-youtube"></i></a>
+            <a href="#" class="social-btn" target="_blank"><i class="fa-brands fa-tiktok"></i></a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Contact Form -->
+      <div class="contact-form-wrapper" data-aos="fade-left">
+        <form id="contact-form" novalidate>
+          <div class="form-row">
+            <div class="form-group">
+              <label>სახელი *</label>
+              <input type="text" name="name" required placeholder="თქვენი სახელი" />
+            </div>
+            <div class="form-group">
+              <label>ელ-ფოსტა *</label>
+              <input type="email" name="email" required placeholder="your@email.com" />
+            </div>
+          </div>
+          <div class="form-group">
+            <label>თემა</label>
+            <input type="text" name="subject" placeholder="ტურის შესახებ კითხვა" />
+          </div>
+          <div class="form-group">
+            <label>შეტყობინება *</label>
+            <textarea name="message" rows="5" required placeholder="გვიამბეთ თქვენი სურვილების შესახებ..."></textarea>
+          </div>
+          <button type="submit" class="btn btn-gold btn-full">
+            <i class="fa-solid fa-paper-plane"></i> შეტყობინების გაგზავნა
+          </button>
+          <div id="contact-result" style="display:none"></div>
+        </form>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ FOOTER ═══════════════════════════════════════════════════════════════ -->
+<footer id="footer">
+  <div class="footer-top">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <div class="footer-logo">🇬🇪 Georgia <em>Premium</em></div>
+          <p>პრემიუმ ტურები საქართველოში. 12 წლის გამოცდილება, 2400+ ბედნიერი სტუმარი. ჩვენ ვქმნით მოგზაურობებს, რომლებიც მთელი ცხოვრება გახსოვთ.</p>
+          <div class="footer-social">
+            <a href="#"><i class="fa-brands fa-instagram"></i></a>
+            <a href="#"><i class="fa-brands fa-facebook"></i></a>
+            <a href="#"><i class="fa-brands fa-youtube"></i></a>
+            <a href="#"><i class="fa-brands fa-tiktok"></i></a>
+            <a href="https://wa.me/995555100200" target="_blank"><i class="fa-brands fa-whatsapp"></i></a>
+          </div>
+        </div>
+
+        <div class="footer-links-col">
+          <h4>ტურები</h4>
+          <ul>
+            <li><a href="#tours">თბილისი</a></li>
+            <li><a href="#tours">ყაზბეგი</a></li>
+            <li><a href="#tours">კახეთი</a></li>
+            <li><a href="#tours">ბათუმი</a></li>
+            <li><a href="#tours">სვანეთი</a></li>
+            <li><a href="#tours">VIP 7 დღე</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-links-col">
+          <h4>კომპანია</h4>
+          <ul>
+            <li><a href="#about">ჩვენ შესახებ</a></li>
+            <li><a href="#testimonials">შეფასებები</a></li>
+            <li><a href="#gallery">გალერეა</a></li>
+            <li><a href="#booking">დაჯავშნე</a></li>
+            <li><a href="#contact">კონტაქტი</a></li>
+            <li><a href="/admin">ადმინი</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-links-col">
+          <h4>კონტაქტი</h4>
+          <ul class="footer-contact-list">
+            <li><i class="fa-solid fa-phone"></i><a href="tel:+995555100200">+995 555 100 200</a></li>
+            <li><i class="fa-solid fa-envelope"></i><a href="mailto:info@georgiatrips.ge">info@georgiatrips.ge</a></li>
+            <li><i class="fa-solid fa-location-dot"></i><span>რუსთაველი 42, თბილისი</span></li>
+            <li><i class="fa-solid fa-clock"></i><span>ყოველდღე 09:00—21:00</span></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <div class="container">
+      <p>© 2025 Georgia Premium Trips. All rights reserved.</p>
+      <p>Made with ❤️ for Georgia 🇬🇪</p>
+    </div>
+  </div>
+</footer>
+
+<!-- ══ BACK TO TOP ══════════════════════════════════════════════════════════ -->
+<button id="back-to-top" title="Back to top"><i class="fa-solid fa-chevron-up"></i></button>
+
+<!-- ══ CHATBOT ══════════════════════════════════════════════════════════════ -->
+<div id="chatbot-widget">
+  <!-- Toggle -->
+  <button id="chatbot-toggle" class="chatbot-toggle-btn">
+    <div class="chat-icon-wrap">
+      <i class="fa-solid fa-comment-dots chat-open-icon"></i>
+      <i class="fa-solid fa-xmark chat-close-icon"></i>
+    </div>
+    <span class="chat-badge" id="chat-badge">1</span>
+  </button>
+
+  <!-- Chat Window -->
+  <div class="chatbot-window" id="chatbot-window">
+    <div class="chat-header">
+      <div class="chat-header-avatar">🇬🇪</div>
+      <div class="chat-header-info">
+        <div class="chat-header-name">Georgia AI Assistant</div>
+        <div class="chat-header-status"><span class="online-dot"></span> Online — ყოველთვის მზად</div>
+      </div>
+      <button class="chat-minimize" id="chat-minimize"><i class="fa-solid fa-minus"></i></button>
+    </div>
+
+    <div class="chat-messages" id="chat-messages">
+      <div class="chat-date-divider">ახლა</div>
+      <div class="chat-msg bot">
+        <div class="msg-avatar">🇬🇪</div>
+        <div class="msg-bubble">
+          გამარჯობა! მე ვარ Georgia Premium-ის AI ასისტენტი 🌟<br>
+          გეხმარებით ტურების, ფასების და ჯავშნის შესახებ. რით შემიძლია დაგეხმაროთ?
+        </div>
+      </div>
+    </div>
+
+    <!-- Quick Suggestions -->
+    <div class="chat-suggestions" id="chat-suggestions">
+      <button class="suggestion-chip">ტურების ნახვა</button>
+      <button class="suggestion-chip">ფასები</button>
+      <button class="suggestion-chip">ყაზბეგი</button>
+      <button class="suggestion-chip">დაჯავშნა</button>
+    </div>
+
+    <div class="chat-input-area">
+      <input type="text" id="chat-input" placeholder="შეტყობინება..." />
+      <button id="chat-send" class="chat-send-btn">
+        <i class="fa-solid fa-paper-plane"></i>
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- Toast Notification -->
+<div id="toast" class="toast"></div>
+
+<!-- ══ SCRIPTS ══════════════════════════════════════════════════════════════ -->
+<script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+<script src="https://unpkg.com/aos@2.3.4/dist/aos.js"></script>
+<script src="js/main.js"></script>
+<script src="js/chatbot.js"></script>
+</body>
+</html>
