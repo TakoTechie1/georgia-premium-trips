@@ -320,7 +320,15 @@
             <select name="active"><option value="1">აქტიური</option><option value="0">არააქტიური</option></select>
           </div>
         </div>
-        <div class="form-group"><label>ფოტო URL</label><input type="url" name="image" placeholder="https://..." /></div>
+        <div class="form-group">
+          <label>ფოტო</label>
+          <input type="file" id="tour-file-pick" accept="image/*" style="display:none" />
+          <button type="button" class="btn-file-pick" onclick="document.getElementById('tour-file-pick').click()">
+            <i class="fa-solid fa-upload"></i> ფაილიდან არჩევა
+          </button>
+          <input type="text" name="image" id="tour-image-input" placeholder="ან ჩასვით ბმული https://..." style="margin-top:8px" />
+          <div class="upload-preview" id="tour-img-preview"></div>
+        </div>
         <div class="form-group"><label>ჩართულია (მძიმით)</label><input type="text" name="included" placeholder="ტრანსპორტი,გიდი,სადილი" /></div>
         <div class="form-group"><label>ძირ. ადგილები (მძიმით)</label><input type="text" name="highlights" placeholder="ნარიყალა,მეტეხი" /></div>
         <div class="form-row-2">
@@ -384,8 +392,15 @@
       <input type="hidden" name="id" />
       <div class="modal-body">
         <div class="form-group"><label>სათაური</label><input type="text" name="title" /></div>
-        <div class="form-group"><label>ფოტო URL *</label><input type="url" name="image" required placeholder="https://..." /></div>
-        <div class="gallery-img-preview" id="gallery-preview"></div>
+        <div class="form-group">
+          <label>ფოტო *</label>
+          <input type="file" id="gallery-file-pick" accept="image/*" style="display:none" />
+          <button type="button" class="btn-file-pick" onclick="document.getElementById('gallery-file-pick').click()">
+            <i class="fa-solid fa-upload"></i> ფაილიდან არჩევა
+          </button>
+          <input type="text" name="image" required placeholder="ან ჩასვით ბმული https://..." style="margin-top:8px" />
+          <div class="gallery-img-preview" id="gallery-preview"></div>
+        </div>
         <div class="form-group"><label>კატეგორია</label>
           <select name="category">
             <option value="mountains">Mountains</option>

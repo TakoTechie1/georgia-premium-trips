@@ -100,11 +100,39 @@ const Admin = {
     document.getElementById('gallery-form')?.addEventListener('submit', e => this.saveGallery(e));
     document.getElementById('add-photo-btn')?.addEventListener('click', () => this.openGalleryModal());
 
-    // Gallery image preview
+    // Gallery image URL preview (typed URL)
     document.querySelector('#gallery-form input[name="image"]')?.addEventListener('input', e => {
       const prev = document.getElementById('gallery-preview');
-      if (e.target.value) prev.innerHTML = `<img src="${e.target.value}" onerror="this.style.display='none'" />`;
-      else prev.innerHTML = '';
+      const v = e.target.value;
+      if (v && !v.startsWith('data:')) prev.innerHTML = `<img src="${v}" onerror="this.style.display='none'" />`;
+      else if (!v) prev.innerHTML = '';
+    });
+
+    // Tour file pick
+    document.getElementById('tour-file-pick')?.addEventListener('change', async e => {
+      const file = e.target.files[0];
+      if (!file) return;
+      const b64 = await this.compressImage(file);
+      document.getElementById('tour-image-input').value = b64;
+      document.getElementById('tour-img-preview').innerHTML = `<img src="${b64}" />`;
+    });
+
+    // Tour URL input preview (typed URL)
+    document.getElementById('tour-image-input')?.addEventListener('input', e => {
+      const prev = document.getElementById('tour-img-preview');
+      if (!prev) return;
+      const v = e.target.value;
+      if (v && !v.startsWith('data:')) prev.innerHTML = `<img src="${v}" onerror="this.style.display='none'" />`;
+      else if (!v) prev.innerHTML = '';
+    });
+
+    // Gallery file pick
+    document.getElementById('gallery-file-pick')?.addEventListener('change', async e => {
+      const file = e.target.files[0];
+      if (!file) return;
+      const b64 = await this.compressImage(file);
+      document.querySelector('#gallery-form input[name="image"]').value = b64;
+      document.getElementById('gallery-preview').innerHTML = `<img src="${b64}" />`;
     });
 
     // Settings form
@@ -221,6 +249,8 @@ const Admin = {
     form.reset();
     document.querySelector('#tour-form input[name="id"]').value = '';
     document.getElementById('tour-modal-title').textContent = id ? 'ტურის რედ.' : 'ახალი ტური';
+    document.getElementById('tour-img-preview').innerHTML = '';
+    const fp = document.getElementById('tour-file-pick'); if (fp) fp.value = '';
     if (id) {
       const t = this.allTours.find(x => x.id === id);
       if (t) {
@@ -239,6 +269,7 @@ const Admin = {
         form.querySelector('[name="highlights"]').value = t.highlights || '';
         form.querySelector('[name="active"]').value = t.active ? '1' : '0';
         form.querySelector('[name="featured"]').checked = !!t.featured;
+        if (t.image) document.getElementById('tour-img-preview').innerHTML = `<img src="${t.image}" onerror="this.style.display='none'" />`;
       }
     }
     document.getElementById('tour-form-modal').classList.add('open');
@@ -519,6 +550,7 @@ const Admin = {
     form.reset();
     form.querySelector('[name="id"]').value = '';
     document.getElementById('gallery-preview').innerHTML = '';
+    const fp = document.getElementById('gallery-file-pick'); if (fp) fp.value = '';
     if (id) {
       const g = this.allGallery.find(x => x.id === id);
       if (g) {
@@ -574,6 +606,26 @@ const Admin = {
       await this.api('/api/admin/settings', 'PUT', data);
       this.toast('✅ პარამეტრები შენახულია', 's');
     } catch(err) { this.toast('❌ ' + err.message, 'e'); }
+  },
+
+  // ── IMAGE UPLOAD HELPER ───────────────────────────────────────────────────
+  compressImage(file, maxWidth = 1200, quality = 0.82) {
+    return new Promise(resolve => {
+      const reader = new FileReader();
+      reader.onload = ev => {
+        const img = new Image();
+        img.onload = () => {
+          const canvas = document.createElement('canvas');
+          let w = img.width, h = img.height;
+          if (w > maxWidth) { h = Math.round(h * maxWidth / w); w = maxWidth; }
+          canvas.width = w; canvas.height = h;
+          canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+          resolve(canvas.toDataURL('image/jpeg', quality));
+        };
+        img.src = ev.target.result;
+      };
+      reader.readAsDataURL(file);
+    });
   },
 
   async changePassword(e) {
