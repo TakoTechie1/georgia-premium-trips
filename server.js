@@ -368,12 +368,14 @@ app.get('/api/gallery', (req, res) => {
 });
 
 app.post('/api/bookings', (req, res) => {
-  const { name, email, phone, tour_id, date, guests, special_requests } = req.body;
+  const { name, email, phone, tour_id, tour_name: submitted_tour_name, date, guests, special_requests } = req.body;
   if (!name?.trim() || !email?.trim()) return res.status(400).json({ error: 'Name and email required' });
-  const tour = tour_id ? db.prepare('SELECT * FROM tours WHERE id=?').get(tour_id) : null;
+  const numericId = tour_id && /^\d+$/.test(String(tour_id)) ? tour_id : null;
+  const tour = numericId ? db.prepare('SELECT * FROM tours WHERE id=?').get(numericId) : null;
+  const finalTourName = submitted_tour_name || tour?.name || null;
   const ref = 'GP-' + Date.now().toString(36).toUpperCase().slice(-6);
   const total = tour ? tour.price * (parseInt(guests) || 1) : null;
-  db.prepare(`INSERT INTO bookings (booking_ref,name,email,phone,tour_id,tour_name,date,guests,special_requests,total_price) VALUES (?,?,?,?,?,?,?,?,?,?)`).run(ref, name.trim(), email.trim(), phone || null, tour_id || null, tour?.name || null, date || null, parseInt(guests) || 1, special_requests || null, total);
+  db.prepare(`INSERT INTO bookings (booking_ref,name,email,phone,tour_id,tour_name,date,guests,special_requests,total_price) VALUES (?,?,?,?,?,?,?,?,?,?)`).run(ref, name.trim(), email.trim(), phone || null, numericId || null, finalTourName, date || null, parseInt(guests) || 1, special_requests || null, total);
   res.json({ success: true, booking_ref: ref, message: 'დაჯავშნა მიღებულია! მალე დაგიკავშირდებით.' });
 });
 

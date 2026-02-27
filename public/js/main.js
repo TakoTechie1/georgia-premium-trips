@@ -457,19 +457,19 @@ async function loadHotels(city = 'all') {
         <div class="hotel-img-wrap">
           ${h.image ? `<img src="${h.image}" alt="${h.name}" loading="lazy" onerror="this.style.display='none'" />` : `<div class="hotel-no-img"><i class="fa-solid fa-hotel"></i></div>`}
           ${h.featured ? '<span class="hotel-badge-feat">★ Featured</span>' : ''}
-          <span class="hotel-city-tag">${h.city}</span>
+          <span class="hotel-city-tag"><i class="fa-solid fa-location-dot"></i> ${h.city}</span>
         </div>
-        <div class="hotel-info">
+        <div class="hotel-body">
           <div class="hotel-stars">${stars}</div>
           <h3 class="hotel-name">${h.name}</h3>
-          ${h.address ? `<div class="hotel-addr"><i class="fa-solid fa-location-dot"></i> ${h.address}</div>` : ''}
+          ${h.address ? `<div style="font-size:0.76rem;color:var(--text-muted);display:flex;align-items:center;gap:4px"><i class="fa-solid fa-location-dot" style="color:var(--gold)"></i> ${h.address}</div>` : ''}
           ${amenList ? `<div class="hotel-amenities">${amenList}</div>` : ''}
           <div class="hotel-price-row">
             <div>
-              ${(h.original_price && h.original_price > h.price_per_night) ? `<span class="hotel-price-old">$${h.original_price}</span>` : ''}
-              <span class="hotel-price">$${h.price_per_night}</span><span class="hotel-per">/ღამე</span>${savings}
+              ${(h.original_price && h.original_price > h.price_per_night) ? `<div class="hotel-old-price">$${h.original_price}</div>` : ''}
+              <span class="hotel-price">$${h.price_per_night}</span><span class="hotel-price-note">/ღამე</span>${savings}
             </div>
-            <button class="btn btn-gold btn-sm" onclick="openHotelBooking(${h.id},'${h.name.replace(/'/g,"\\'")}',${h.price_per_night})">
+            <button class="hotel-book-btn" onclick="openHotelBooking(${h.id},'${h.name.replace(/'/g,"\\'")}',${h.price_per_night})">
               <i class="fa-solid fa-calendar-check"></i> ჯავშანი
             </button>
           </div>
@@ -490,16 +490,17 @@ function initHotelFilters() {
 }
 
 function openHotelBooking(id, name, price) {
-  const modal = document.getElementById('booking-modal');
-  if (!modal) return;
-  const sel = modal.querySelector('select[name="tour_id"]');
+  const sel = document.getElementById('booking-tour');
   if (sel) {
     Array.from(sel.options).forEach(o => { if (o.value.startsWith('hotel_') || o.value.startsWith('transfer_')) o.remove(); });
     const opt = new Option('🏨 ' + name + ' ($' + price + '/ღამე)', 'hotel_' + id, true, true);
     sel.insertAdjacentElement('afterbegin', opt);
+    updatePricePreview();
   }
-  modal.classList.add('open');
-  document.body.style.overflow = 'hidden';
+  document.querySelectorAll('.form-step').forEach(s => s.classList.remove('active'));
+  document.getElementById('step-1')?.classList.add('active');
+  updateStepIndicators(1);
+  document.getElementById('booking')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
 
 // ── TRANSFERS (main) ───────────────────────────────────────────────────────
@@ -525,7 +526,7 @@ async function loadTransfers() {
           ${t.image ? `<img src="${t.image}" alt="${t.from_city}" loading="lazy" onerror="this.style.display='none'" />` : `<div class="transfer-no-img"><i class="fa-solid ${typeIcon[t.car_type]||'fa-van-shuttle'}"></i></div>`}
           <span class="transfer-type-badge">${typeLabel[t.car_type]||t.car_type}</span>
         </div>
-        <div class="transfer-info">
+        <div class="transfer-body">
           <div class="transfer-route">
             <span>${t.from_city}</span>
             <span class="transfer-arrow"><i class="fa-solid fa-arrow-right"></i></span>
@@ -533,13 +534,13 @@ async function loadTransfers() {
           </div>
           ${t.description ? `<p class="transfer-desc">${t.description}</p>` : ''}
           <div class="transfer-meta">
-            <span><i class="fa-solid fa-user-group"></i> ${t.max_passengers} კაცი</span>
-            ${t.duration_hours ? `<span><i class="fa-solid fa-clock"></i> ${t.duration_hours} სთ</span>` : ''}
-            ${t.distance_km ? `<span><i class="fa-solid fa-road"></i> ${t.distance_km} კმ</span>` : ''}
+            <span class="transfer-meta-item"><i class="fa-solid fa-user-group"></i> ${t.max_passengers} კაცი</span>
+            ${t.duration_hours ? `<span class="transfer-meta-item"><i class="fa-solid fa-clock"></i> ${t.duration_hours} სთ</span>` : ''}
+            ${t.distance_km ? `<span class="transfer-meta-item"><i class="fa-solid fa-road"></i> ${t.distance_km} კმ</span>` : ''}
           </div>
           <div class="transfer-price-row">
-            <div class="transfer-price">$${t.price}<span class="transfer-per">/ტრიპი</span></div>
-            <button class="btn btn-gold btn-sm" onclick="openTransferBooking(${t.id},'${(t.from_city+' → '+t.to_city).replace(/'/g,"\\'")}',${t.price})">
+            <div><span class="transfer-price">$${t.price}</span><span class="transfer-price-note">/ტრიპი</span></div>
+            <button class="transfer-book-btn" onclick="openTransferBooking(${t.id},'${(t.from_city+' → '+t.to_city).replace(/'/g,"\\'")}',${t.price})">
               <i class="fa-solid fa-calendar-check"></i> ჯავშანი
             </button>
           </div>
@@ -550,16 +551,17 @@ async function loadTransfers() {
 }
 
 function openTransferBooking(id, route, price) {
-  const modal = document.getElementById('booking-modal');
-  if (!modal) return;
-  const sel = modal.querySelector('select[name="tour_id"]');
+  const sel = document.getElementById('booking-tour');
   if (sel) {
     Array.from(sel.options).forEach(o => { if (o.value.startsWith('hotel_') || o.value.startsWith('transfer_')) o.remove(); });
     const opt = new Option('🚐 ' + route + ' ($' + price + ')', 'transfer_' + id, true, true);
     sel.insertAdjacentElement('afterbegin', opt);
+    updatePricePreview();
   }
-  modal.classList.add('open');
-  document.body.style.overflow = 'hidden';
+  document.querySelectorAll('.form-step').forEach(s => s.classList.remove('active'));
+  document.getElementById('step-1')?.classList.add('active');
+  updateStepIndicators(1);
+  document.getElementById('booking')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
 
 // ── SEARCH HUB ────────────────────────────────────────────────────────────
@@ -804,6 +806,8 @@ function initBookingForm() {
     const btn = e.target.querySelector('[type="submit"]');
     btn.disabled = true; btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> იგზავნება...';
     const data = Object.fromEntries(new FormData(e.target));
+    const tourSel = document.getElementById('booking-tour');
+    if (tourSel?.selectedOptions[0]?.text) data.tour_name = tourSel.selectedOptions[0].text;
     try {
       const res = await fetch('/api/bookings', {
         method: 'POST', headers: { 'Content-Type': 'application/json' },

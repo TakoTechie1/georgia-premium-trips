@@ -887,8 +887,10 @@ const Admin = {
     const data = Object.fromEntries(fd.entries());
     const id = data.id; delete data.id;
     try {
-      if (id) await this.api(`/api/admin/gallery/${id}`, 'PUT', { ...data, active: 1 });
-      else await this.api('/api/admin/gallery', 'POST', data);
+      if (id) {
+        const existing = this.allGallery.find(x => x.id == id);
+        await this.api(`/api/admin/gallery/${id}`, 'PUT', { ...data, active: existing?.active ?? 1 });
+      } else await this.api('/api/admin/gallery', 'POST', data);
       this.closeGalleryModal();
       this.loadGallery();
       this.toast('✅ შენახულია', 's');
