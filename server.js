@@ -89,6 +89,38 @@ function initDB() {
       order_index INTEGER DEFAULT 0
     );
 
+    CREATE TABLE IF NOT EXISTS hotels (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      name TEXT NOT NULL,
+      city TEXT NOT NULL,
+      stars INTEGER DEFAULT 3,
+      price_per_night INTEGER NOT NULL DEFAULT 0,
+      original_price INTEGER,
+      description TEXT,
+      amenities TEXT,
+      image TEXT,
+      address TEXT,
+      featured INTEGER DEFAULT 0,
+      available INTEGER DEFAULT 1,
+      order_index INTEGER DEFAULT 0,
+      created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+    );
+
+    CREATE TABLE IF NOT EXISTS transfers (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      from_city TEXT NOT NULL,
+      to_city TEXT NOT NULL,
+      car_type TEXT DEFAULT 'sedan',
+      price INTEGER NOT NULL DEFAULT 0,
+      duration_hours REAL,
+      distance_km INTEGER,
+      image TEXT,
+      description TEXT,
+      max_passengers INTEGER DEFAULT 4,
+      available INTEGER DEFAULT 1,
+      order_index INTEGER DEFAULT 0
+    );
+
     CREATE TABLE IF NOT EXISTS cars (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
       name TEXT NOT NULL,
@@ -286,6 +318,31 @@ app.get('/api/tours', (req, res) => {
 app.get('/api/tours/:id', (req, res) => {
   const t = db.prepare('SELECT * FROM tours WHERE id=? AND active=1').get(req.params.id);
   t ? res.json(t) : res.status(404).json({ error: 'Not found' });
+});
+
+app.get('/api/hotels', (req, res) => {
+  const { city, featured } = req.query;
+  let q = 'SELECT * FROM hotels WHERE available=1';
+  const p = [];
+  if (city && city !== 'all') { q += ' AND city=?'; p.push(city); }
+  if (featured) { q += ' AND featured=1'; }
+  q += ' ORDER BY featured DESC, order_index, id';
+  res.json(db.prepare(q).all(...p));
+});
+
+app.get('/api/hotels/:id', (req, res) => {
+  const h = db.prepare('SELECT * FROM hotels WHERE id=? AND available=1').get(req.params.id);
+  h ? res.json(h) : res.status(404).json({ error: 'Not found' });
+});
+
+app.get('/api/transfers', (req, res) => {
+  const { from_city, to_city } = req.query;
+  let q = 'SELECT * FROM transfers WHERE available=1';
+  const p = [];
+  if (from_city) { q += ' AND from_city=?'; p.push(from_city); }
+  if (to_city) { q += ' AND to_city=?'; p.push(to_city); }
+  q += ' ORDER BY order_index, id';
+  res.json(db.prepare(q).all(...p));
 });
 
 app.get('/api/cars', (req, res) => {
@@ -668,6 +725,40 @@ app.put('/api/admin/gallery/:id', auth, (req, res) => {
 });
 app.delete('/api/admin/gallery/:id', auth, (req, res) => {
   db.prepare('DELETE FROM gallery WHERE id=?').run(req.params.id);
+  res.json({ success: true });
+});
+
+// Hotels CRUD
+app.get('/api/admin/hotels', auth, (req, res) => res.json(db.prepare('SELECT * FROM hotels ORDER BY order_index,id').all()));
+app.post('/api/admin/hotels', auth, (req, res) => {
+  const { name, city, stars, price_per_night, original_price, description, amenities, image, address, featured, available } = req.body;
+  const r = db.prepare(`INSERT INTO hotels (name,city,stars,price_per_night,original_price,description,amenities,image,address,featured,available) VALUES (?,?,?,?,?,?,?,?,?,?,?)`).run(name, city, +stars||3, +price_per_night||0, +original_price||null, description, amenities, image||null, address, featured?1:0, available!==undefined?+available:1);
+  res.json({ id: r.lastInsertRowid });
+});
+app.put('/api/admin/hotels/:id', auth, (req, res) => {
+  const { name, city, stars, price_per_night, original_price, description, amenities, image, address, featured, available } = req.body;
+  db.prepare(`UPDATE hotels SET name=?,city=?,stars=?,price_per_night=?,original_price=?,description=?,amenities=?,image=?,address=?,featured=?,available=? WHERE id=?`).run(name, city, +stars||3, +price_per_night||0, +original_price||null, description, amenities, image||null, address, featured?1:0, +available, req.params.id);
+  res.json({ success: true });
+});
+app.delete('/api/admin/hotels/:id', auth, (req, res) => {
+  db.prepare('UPDATE hotels SET available=0 WHERE id=?').run(req.params.id);
+  res.json({ success: true });
+});
+
+// Transfers CRUD
+app.get('/api/admin/transfers', auth, (req, res) => res.json(db.prepare('SELECT * FROM transfers ORDER BY order_index,id').all()));
+app.post('/api/admin/transfers', auth, (req, res) => {
+  const { from_city, to_city, car_type, price, duration_hours, distance_km, image, description, max_passengers, available } = req.body;
+  const r = db.prepare(`INSERT INTO transfers (from_city,to_city,car_type,price,duration_hours,distance_km,image,description,max_passengers,available) VALUES (?,?,?,?,?,?,?,?,?,?)`).run(from_city, to_city, car_type||'sedan', +price||0, +duration_hours||null, +distance_km||null, image||null, description, +max_passengers||4, available!==undefined?+available:1);
+  res.json({ id: r.lastInsertRowid });
+});
+app.put('/api/admin/transfers/:id', auth, (req, res) => {
+  const { from_city, to_city, car_type, price, duration_hours, distance_km, image, description, max_passengers, available } = req.body;
+  db.prepare(`UPDATE transfers SET from_city=?,to_city=?,car_type=?,price=?,duration_hours=?,distance_km=?,image=?,description=?,max_passengers=?,available=? WHERE id=?`).run(from_city, to_city, car_type||'sedan', +price||0, +duration_hours||null, +distance_km||null, image||null, description, +max_passengers||4, +available, req.params.id);
+  res.json({ success: true });
+});
+app.delete('/api/admin/transfers/:id', auth, (req, res) => {
+  db.prepare('DELETE FROM transfers WHERE id=?').run(req.params.id);
   res.json({ success: true });
 });
 

@@ -433,6 +433,182 @@ async function loadTestimonials() {
 let galleryItems = [];
 let lightboxIdx = 0;
 
+// ── HOTELS ────────────────────────────────────────────────────────────────
+async function loadHotels(city = 'all') {
+  try {
+    const url = city === 'all' ? '/api/hotels' : `/api/hotels?city=${encodeURIComponent(city)}`;
+    const res = await fetch(url);
+    const hotels = await res.json();
+    const grid = document.getElementById('hotels-grid');
+    const empty = document.getElementById('hotels-empty');
+    if (!grid) return;
+    if (!hotels.length) {
+      grid.style.display = 'none';
+      if (empty) empty.style.display = 'block';
+      return;
+    }
+    if (empty) empty.style.display = 'none';
+    grid.style.display = '';
+    grid.innerHTML = hotels.map(h => {
+      const stars = '★'.repeat(h.stars||3) + '☆'.repeat(Math.max(0,5-(h.stars||3)));
+      const amenList = h.amenities ? h.amenities.split(',').slice(0,4).map(a=>`<span class="hotel-amen">${a.trim()}</span>`).join('') : '';
+      const savings = (h.original_price && h.original_price > h.price_per_night) ? `<span class="hotel-save">-${Math.round((1-h.price_per_night/h.original_price)*100)}%</span>` : '';
+      return `<div class="hotel-card">
+        <div class="hotel-img-wrap">
+          ${h.image ? `<img src="${h.image}" alt="${h.name}" loading="lazy" onerror="this.style.display='none'" />` : `<div class="hotel-no-img"><i class="fa-solid fa-hotel"></i></div>`}
+          ${h.featured ? '<span class="hotel-badge-feat">★ Featured</span>' : ''}
+          <span class="hotel-city-tag">${h.city}</span>
+        </div>
+        <div class="hotel-info">
+          <div class="hotel-stars">${stars}</div>
+          <h3 class="hotel-name">${h.name}</h3>
+          ${h.address ? `<div class="hotel-addr"><i class="fa-solid fa-location-dot"></i> ${h.address}</div>` : ''}
+          ${amenList ? `<div class="hotel-amenities">${amenList}</div>` : ''}
+          <div class="hotel-price-row">
+            <div>
+              ${(h.original_price && h.original_price > h.price_per_night) ? `<span class="hotel-price-old">$${h.original_price}</span>` : ''}
+              <span class="hotel-price">$${h.price_per_night}</span><span class="hotel-per">/ღამე</span>${savings}
+            </div>
+            <button class="btn btn-gold btn-sm" onclick="openHotelBooking(${h.id},'${h.name.replace(/'/g,"\\'")}',${h.price_per_night})">
+              <i class="fa-solid fa-calendar-check"></i> ჯავშანი
+            </button>
+          </div>
+        </div>
+      </div>`;
+    }).join('');
+  } catch(e) {}
+}
+
+function initHotelFilters() {
+  document.querySelectorAll('.hotels-filter-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.hotels-filter-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      loadHotels(btn.dataset.city);
+    });
+  });
+}
+
+function openHotelBooking(id, name, price) {
+  const modal = document.getElementById('booking-modal');
+  if (!modal) return;
+  const sel = modal.querySelector('select[name="tour_id"]');
+  if (sel) {
+    Array.from(sel.options).forEach(o => { if (o.value.startsWith('hotel_') || o.value.startsWith('transfer_')) o.remove(); });
+    const opt = new Option('🏨 ' + name + ' ($' + price + '/ღამე)', 'hotel_' + id, true, true);
+    sel.insertAdjacentElement('afterbegin', opt);
+  }
+  modal.classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+// ── TRANSFERS (main) ───────────────────────────────────────────────────────
+async function loadTransfers() {
+  try {
+    const res = await fetch('/api/transfers');
+    const transfers = await res.json();
+    const grid = document.getElementById('transfers-grid');
+    const empty = document.getElementById('transfers-empty');
+    if (!grid) return;
+    if (!transfers.length) {
+      grid.style.display = 'none';
+      if (empty) empty.style.display = 'block';
+      return;
+    }
+    if (empty) empty.style.display = 'none';
+    grid.style.display = '';
+    const typeLabel = { sedan:'სედანი', minivan:'მინივენი', vip:'VIP', jeep:'ჯიპი' };
+    const typeIcon = { sedan:'fa-car', minivan:'fa-van-shuttle', vip:'fa-gem', jeep:'fa-truck-monster' };
+    grid.innerHTML = transfers.map(t => `
+      <div class="transfer-card">
+        <div class="transfer-img-wrap">
+          ${t.image ? `<img src="${t.image}" alt="${t.from_city}" loading="lazy" onerror="this.style.display='none'" />` : `<div class="transfer-no-img"><i class="fa-solid ${typeIcon[t.car_type]||'fa-van-shuttle'}"></i></div>`}
+          <span class="transfer-type-badge">${typeLabel[t.car_type]||t.car_type}</span>
+        </div>
+        <div class="transfer-info">
+          <div class="transfer-route">
+            <span>${t.from_city}</span>
+            <span class="transfer-arrow"><i class="fa-solid fa-arrow-right"></i></span>
+            <span>${t.to_city}</span>
+          </div>
+          ${t.description ? `<p class="transfer-desc">${t.description}</p>` : ''}
+          <div class="transfer-meta">
+            <span><i class="fa-solid fa-user-group"></i> ${t.max_passengers} კაცი</span>
+            ${t.duration_hours ? `<span><i class="fa-solid fa-clock"></i> ${t.duration_hours} სთ</span>` : ''}
+            ${t.distance_km ? `<span><i class="fa-solid fa-road"></i> ${t.distance_km} კმ</span>` : ''}
+          </div>
+          <div class="transfer-price-row">
+            <div class="transfer-price">$${t.price}<span class="transfer-per">/ტრიპი</span></div>
+            <button class="btn btn-gold btn-sm" onclick="openTransferBooking(${t.id},'${(t.from_city+' → '+t.to_city).replace(/'/g,"\\'")}',${t.price})">
+              <i class="fa-solid fa-calendar-check"></i> ჯავშანი
+            </button>
+          </div>
+        </div>
+      </div>
+    `).join('');
+  } catch(e) {}
+}
+
+function openTransferBooking(id, route, price) {
+  const modal = document.getElementById('booking-modal');
+  if (!modal) return;
+  const sel = modal.querySelector('select[name="tour_id"]');
+  if (sel) {
+    Array.from(sel.options).forEach(o => { if (o.value.startsWith('hotel_') || o.value.startsWith('transfer_')) o.remove(); });
+    const opt = new Option('🚐 ' + route + ' ($' + price + ')', 'transfer_' + id, true, true);
+    sel.insertAdjacentElement('afterbegin', opt);
+  }
+  modal.classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+// ── SEARCH HUB ────────────────────────────────────────────────────────────
+function initSearchHub() {
+  document.querySelectorAll('.shub-tab').forEach(tab => {
+    tab.addEventListener('click', () => {
+      document.querySelectorAll('.shub-tab').forEach(t => t.classList.remove('active'));
+      document.querySelectorAll('.shub-panel').forEach(p => p.classList.remove('active'));
+      tab.classList.add('active');
+      document.getElementById(tab.dataset.panel)?.classList.add('active');
+    });
+  });
+}
+
+window.shubSearchTours = function() {
+  const cat = document.getElementById('shub-tour-cat')?.value;
+  if (cat) {
+    const btn = document.querySelector(`.tour-filter-btn[data-cat="${cat}"]`);
+    document.querySelectorAll('.tour-filter-btn').forEach(b => b.classList.remove('active'));
+    if (btn) { btn.classList.add('active'); btn.click(); } else loadToursFiltered(cat);
+  } else { document.querySelector('.tour-filter-btn[data-cat="all"]')?.click(); }
+  document.getElementById('tours')?.scrollIntoView({ behavior: 'smooth' });
+};
+
+window.shubSearchHotels = function() {
+  const city = document.getElementById('shub-hotel-city')?.value || 'all';
+  document.querySelectorAll('.hotels-filter-btn').forEach(b => b.classList.remove('active'));
+  const btn = document.querySelector(`.hotels-filter-btn[data-city="${city}"]`) || document.querySelector('.hotels-filter-btn[data-city="all"]');
+  if (btn) btn.classList.add('active');
+  loadHotels(city);
+  document.getElementById('hotels')?.scrollIntoView({ behavior: 'smooth' });
+};
+
+window.shubSearchCars = function() {
+  const cat = document.getElementById('shub-car-cat')?.value || 'all';
+  document.querySelectorAll('.fleet-filter-btn').forEach(b => b.classList.remove('active'));
+  const btn = document.querySelector(`.fleet-filter-btn[data-cat="${cat}"]`) || document.querySelector('.fleet-filter-btn[data-cat="all"]');
+  if (btn) btn.classList.add('active');
+  loadFleet(cat);
+  document.getElementById('fleet')?.scrollIntoView({ behavior: 'smooth' });
+};
+
+window.shubSearchTransfers = function() {
+  document.getElementById('transfers')?.scrollIntoView({ behavior: 'smooth' });
+};
+
+window.openHotelBooking = openHotelBooking;
+window.openTransferBooking = openTransferBooking;
+
 // ── FLEET ─────────────────────────────────────────────────────────────────
 async function loadFleet(category = 'all') {
   try {
@@ -795,10 +971,12 @@ document.addEventListener('DOMContentLoaded', async () => {
   initBackToTop();
   addHoverSounds();
 
-  await Promise.all([loadSettings(), loadTours(), loadTestimonials(), loadFleet(), loadGallery()]);
+  await Promise.all([loadSettings(), loadTours(), loadTestimonials(), loadFleet(), loadHotels(), loadTransfers(), loadGallery()]);
 
   initTourFilters();
   initFleetFilters();
+  initHotelFilters();
+  initSearchHub();
   initBookingForm();
   initContactForm();
 

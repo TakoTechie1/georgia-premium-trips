@@ -96,6 +96,38 @@ const Admin = {
     document.getElementById('test-form')?.addEventListener('submit', e => this.saveTestimonial(e));
     document.getElementById('add-test-btn')?.addEventListener('click', () => this.openTestModal());
 
+    // Hotel form
+    document.getElementById('hotel-form')?.addEventListener('submit', e => this.saveHotel(e));
+    document.getElementById('add-hotel-btn')?.addEventListener('click', () => this.openHotelModal());
+    document.getElementById('hotel-file-pick')?.addEventListener('change', async e => {
+      const file = e.target.files[0]; if (!file) return;
+      const b64 = await this.compressImage(file);
+      document.getElementById('hotel-image-input').value = b64;
+      document.getElementById('hotel-img-preview').innerHTML = `<img src="${b64}" />`;
+    });
+    document.getElementById('hotel-image-input')?.addEventListener('input', e => {
+      const prev = document.getElementById('hotel-img-preview'); if (!prev) return;
+      const v = e.target.value;
+      if (v && !v.startsWith('data:')) prev.innerHTML = `<img src="${v}" onerror="this.style.display='none'" />`;
+      else if (!v) prev.innerHTML = '';
+    });
+
+    // Transfer form
+    document.getElementById('transfer-form')?.addEventListener('submit', e => this.saveTransfer(e));
+    document.getElementById('add-transfer-btn')?.addEventListener('click', () => this.openTransferModal());
+    document.getElementById('transfer-file-pick')?.addEventListener('change', async e => {
+      const file = e.target.files[0]; if (!file) return;
+      const b64 = await this.compressImage(file);
+      document.getElementById('transfer-image-input').value = b64;
+      document.getElementById('transfer-img-preview').innerHTML = `<img src="${b64}" />`;
+    });
+    document.getElementById('transfer-image-input')?.addEventListener('input', e => {
+      const prev = document.getElementById('transfer-img-preview'); if (!prev) return;
+      const v = e.target.value;
+      if (v && !v.startsWith('data:')) prev.innerHTML = `<img src="${v}" onerror="this.style.display='none'" />`;
+      else if (!v) prev.innerHTML = '';
+    });
+
     // Car form
     document.getElementById('car-form')?.addEventListener('submit', e => this.saveCar(e));
     document.getElementById('add-car-btn')?.addEventListener('click', () => this.openCarModal());
@@ -174,9 +206,9 @@ const Admin = {
     document.querySelector(`.nav-item[data-page="${page}"]`)?.classList.add('active');
     document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
     document.getElementById(`page-${page}`)?.classList.add('active');
-    const titles = { dashboard:'Dashboard', tours:'ტურები', bookings:'ჯავშნები', messages:'შეტყობინებები', testimonials:'შეფასებები', cars:'მანქანები', gallery:'გალერეა', settings:'პარამეტრები' };
+    const titles = { dashboard:'Dashboard', tours:'ტურები', bookings:'ჯავშნები', messages:'შეტყობინებები', testimonials:'შეფასებები', hotels:'სასტუმრო', transfers:'ტრანსფერი', cars:'მანქანები', gallery:'გალერეა', settings:'პარამეტრები' };
     document.getElementById('page-title').textContent = titles[page] || page;
-    const loaders = { tours: () => this.loadTours(), bookings: () => this.loadBookings(), messages: () => this.loadMessages(), testimonials: () => this.loadTestimonials(), cars: () => this.loadCars(), gallery: () => this.loadGallery(), settings: () => this.loadSettings() };
+    const loaders = { tours: () => this.loadTours(), bookings: () => this.loadBookings(), messages: () => this.loadMessages(), testimonials: () => this.loadTestimonials(), hotels: () => this.loadHotels(), transfers: () => this.loadTransfers(), cars: () => this.loadCars(), gallery: () => this.loadGallery(), settings: () => this.loadSettings() };
     loaders[page]?.();
   },
 
@@ -541,6 +573,180 @@ const Admin = {
   async deleteTestimonial(id) {
     if (!this.confirm('წაშლა?')) return;
     try { await this.api(`/api/admin/testimonials/${id}`, 'DELETE'); this.loadTestimonials(); this.toast('✅ წაიშალა', 's'); }
+    catch(e) { this.toast('❌ შეცდომა', 'e'); }
+  },
+
+  // ── HOTELS ────────────────────────────────────────────────────────────────
+  allHotels: [],
+  async loadHotels() {
+    try {
+      this.allHotels = await this.api('/api/admin/hotels');
+      const grid = document.getElementById('hotels-admin-grid');
+      if (!grid) return;
+      if (!this.allHotels.length) {
+        grid.innerHTML = '<div style="padding:40px;text-align:center;color:var(--muted)">სასტუმრო არ არის. დააჭირე "ახალი სასტუმრო"</div>';
+        return;
+      }
+      grid.innerHTML = this.allHotels.map(h => `
+        <div class="hotels-admin-card">
+          <div class="hotels-admin-img-wrap">
+            ${h.image ? `<img src="${h.image}" alt="${h.name}" onerror="this.style.display='none'" />` : `<div class="hotels-no-img"><i class="fa-solid fa-hotel"></i></div>`}
+            <span class="hotels-city-badge">${h.city}</span>
+            ${h.featured ? '<span class="hotels-featured-badge">★ Featured</span>' : ''}
+          </div>
+          <div class="hotels-admin-info">
+            <div class="hotels-admin-name">${h.name}</div>
+            <div class="hotels-admin-meta">
+              <span>${'★'.repeat(h.stars||3)}</span>
+              <span><i class="fa-solid fa-dollar-sign"></i> ${h.price_per_night}/ღამე</span>
+            </div>
+            ${h.amenities ? `<div class="hotels-admin-amenities">${h.amenities.split(',').slice(0,4).map(a=>`<span class="amen-tag">${a.trim()}</span>`).join('')}</div>` : ''}
+            <div class="hotels-admin-footer">
+              <span class="badge ${h.available?'badge-active':'badge-inactive'}">${h.available?'ხელმისაწვდ.':'მიუწვდ.'}</span>
+              <div class="act-btns">
+                <button class="act-btn edit" onclick="Admin.openHotelModal(${h.id})"><i class="fa-solid fa-pen"></i></button>
+                <button class="act-btn delete" onclick="Admin.deleteHotel(${h.id})"><i class="fa-solid fa-trash"></i></button>
+              </div>
+            </div>
+          </div>
+        </div>
+      `).join('');
+    } catch(e) { this.toast('Hotels load error', 'e'); }
+  },
+
+  openHotelModal(id = null) {
+    const form = document.getElementById('hotel-form');
+    form.reset();
+    form.querySelector('[name="id"]').value = '';
+    document.getElementById('hotel-modal-title').textContent = id ? 'სასტუმ. რედ.' : 'ახალი სასტუმრო';
+    document.getElementById('hotel-img-preview').innerHTML = '';
+    const fp = document.getElementById('hotel-file-pick'); if (fp) fp.value = '';
+    if (id) {
+      const h = this.allHotels.find(x => x.id === id);
+      if (h) {
+        form.querySelector('[name="id"]').value = h.id;
+        form.querySelector('[name="name"]').value = h.name||'';
+        form.querySelector('[name="city"]').value = h.city||'Tbilisi';
+        form.querySelector('[name="stars"]').value = h.stars||3;
+        form.querySelector('[name="price_per_night"]').value = h.price_per_night||'';
+        form.querySelector('[name="original_price"]').value = h.original_price||'';
+        form.querySelector('[name="description"]').value = h.description||'';
+        form.querySelector('[name="amenities"]').value = h.amenities||'';
+        form.querySelector('[name="image"]').value = h.image||'';
+        form.querySelector('[name="address"]').value = h.address||'';
+        form.querySelector('[name="featured"]').checked = !!h.featured;
+        form.querySelector('[name="available"]').value = h.available?'1':'0';
+        if (h.image) document.getElementById('hotel-img-preview').innerHTML = `<img src="${h.image}" onerror="this.style.display='none'" />`;
+      }
+    }
+    document.getElementById('hotel-form-modal').classList.add('open');
+  },
+
+  closeHotelModal() { document.getElementById('hotel-form-modal').classList.remove('open'); },
+
+  async saveHotel(e) {
+    e.preventDefault();
+    const fd = new FormData(e.target);
+    const data = Object.fromEntries(fd.entries());
+    data.featured = fd.get('featured') === '1' ? 1 : 0;
+    const id = data.id; delete data.id;
+    try {
+      if (id) await this.api(`/api/admin/hotels/${id}`, 'PUT', data);
+      else await this.api('/api/admin/hotels', 'POST', data);
+      this.closeHotelModal();
+      this.loadHotels();
+      this.toast(id ? '✅ სასტუმრო განახლდა' : '✅ სასტუმრო დაემატა', 's');
+    } catch(err) { this.toast('❌ ' + err.message, 'e'); }
+  },
+
+  async deleteHotel(id) {
+    if (!this.confirm('წაშლა?')) return;
+    try { await this.api(`/api/admin/hotels/${id}`, 'DELETE'); this.loadHotels(); this.toast('✅ წაიშალა', 's'); }
+    catch(e) { this.toast('❌ შეცდომა', 'e'); }
+  },
+
+  // ── TRANSFERS ─────────────────────────────────────────────────────────────
+  allTransfers: [],
+  async loadTransfers() {
+    try {
+      this.allTransfers = await this.api('/api/admin/transfers');
+      const list = document.getElementById('transfers-admin-list');
+      if (!list) return;
+      if (!this.allTransfers.length) {
+        list.innerHTML = '<div style="padding:40px;text-align:center;color:var(--muted)">ტრანსფერი არ არის. დააჭირე "ახალი ტრანსფერი"</div>';
+        return;
+      }
+      const typeLabel = { sedan:'სედანი', minivan:'მინივენი', vip:'VIP', jeep:'ჯიპი' };
+      list.innerHTML = this.allTransfers.map(t => `
+        <div class="transfers-admin-row">
+          ${t.image ? `<img class="transfer-admin-img" src="${t.image}" onerror="this.style.display='none'" />` : `<div class="transfer-admin-img-ph"><i class="fa-solid fa-van-shuttle"></i></div>`}
+          <div class="transfer-admin-info">
+            <div class="transfer-admin-route">
+              <span>${t.from_city}</span> <i class="fa-solid fa-arrow-right" style="color:var(--gold)"></i> <span>${t.to_city}</span>
+            </div>
+            <div class="transfer-admin-meta">
+              <span>${typeLabel[t.car_type]||t.car_type}</span>
+              ${t.duration_hours ? `<span><i class="fa-solid fa-clock"></i> ${t.duration_hours} სთ</span>` : ''}
+              ${t.distance_km ? `<span><i class="fa-solid fa-road"></i> ${t.distance_km} კმ</span>` : ''}
+              <span><i class="fa-solid fa-user-group"></i> ${t.max_passengers} კაცი</span>
+            </div>
+          </div>
+          <div class="transfer-admin-price">$${t.price}</div>
+          <div class="act-btns">
+            <button class="act-btn edit" onclick="Admin.openTransferModal(${t.id})"><i class="fa-solid fa-pen"></i></button>
+            <button class="act-btn delete" onclick="Admin.deleteTransfer(${t.id})"><i class="fa-solid fa-trash"></i></button>
+          </div>
+        </div>
+      `).join('');
+    } catch(e) { this.toast('Transfers load error', 'e'); }
+  },
+
+  openTransferModal(id = null) {
+    const form = document.getElementById('transfer-form');
+    form.reset();
+    form.querySelector('[name="id"]').value = '';
+    document.getElementById('transfer-modal-title').textContent = id ? 'ტრანსფ. რედ.' : 'ახალი ტრანსფერი';
+    document.getElementById('transfer-img-preview').innerHTML = '';
+    const fp = document.getElementById('transfer-file-pick'); if (fp) fp.value = '';
+    if (id) {
+      const t = this.allTransfers.find(x => x.id === id);
+      if (t) {
+        form.querySelector('[name="id"]').value = t.id;
+        form.querySelector('[name="from_city"]').value = t.from_city||'';
+        form.querySelector('[name="to_city"]').value = t.to_city||'';
+        form.querySelector('[name="car_type"]').value = t.car_type||'sedan';
+        form.querySelector('[name="price"]').value = t.price||'';
+        form.querySelector('[name="duration_hours"]').value = t.duration_hours||'';
+        form.querySelector('[name="distance_km"]').value = t.distance_km||'';
+        form.querySelector('[name="max_passengers"]').value = t.max_passengers||4;
+        form.querySelector('[name="available"]').value = t.available?'1':'0';
+        form.querySelector('[name="description"]').value = t.description||'';
+        form.querySelector('[name="image"]').value = t.image||'';
+        if (t.image) document.getElementById('transfer-img-preview').innerHTML = `<img src="${t.image}" onerror="this.style.display='none'" />`;
+      }
+    }
+    document.getElementById('transfer-form-modal').classList.add('open');
+  },
+
+  closeTransferModal() { document.getElementById('transfer-form-modal').classList.remove('open'); },
+
+  async saveTransfer(e) {
+    e.preventDefault();
+    const fd = new FormData(e.target);
+    const data = Object.fromEntries(fd.entries());
+    const id = data.id; delete data.id;
+    try {
+      if (id) await this.api(`/api/admin/transfers/${id}`, 'PUT', data);
+      else await this.api('/api/admin/transfers', 'POST', data);
+      this.closeTransferModal();
+      this.loadTransfers();
+      this.toast(id ? '✅ ტრანსფერი განახლდა' : '✅ ტრანსფერი დაემატა', 's');
+    } catch(err) { this.toast('❌ ' + err.message, 'e'); }
+  },
+
+  async deleteTransfer(id) {
+    if (!this.confirm('წაშლა?')) return;
+    try { await this.api(`/api/admin/transfers/${id}`, 'DELETE'); this.loadTransfers(); this.toast('✅ წაიშალა', 's'); }
     catch(e) { this.toast('❌ შეცდომა', 'e'); }
   },
 

@@ -66,6 +66,12 @@
       <a href="#" class="nav-item" data-page="testimonials">
         <i class="fa-solid fa-star"></i> <span>შეფასებები</span>
       </a>
+      <a href="#" class="nav-item" data-page="hotels">
+        <i class="fa-solid fa-hotel"></i> <span>სასტუმრო</span>
+      </a>
+      <a href="#" class="nav-item" data-page="transfers">
+        <i class="fa-solid fa-van-shuttle"></i> <span>ტრანსფერი</span>
+      </a>
       <a href="#" class="nav-item" data-page="cars">
         <i class="fa-solid fa-car"></i> <span>მანქანები</span>
       </a>
@@ -225,6 +231,30 @@
           <button class="btn-add" id="add-test-btn"><i class="fa-solid fa-plus"></i> ახალი</button>
         </div>
         <div class="testimonials-grid" id="testimonials-grid"></div>
+      </div>
+
+      <!-- ─── HOTELS ───────────────────────────────────────────────────── -->
+      <div id="page-hotels" class="page">
+        <div class="page-header">
+          <div>
+            <h2>სასტუმროები</h2>
+            <p class="page-sub">სასტუმროების მართვა — დამატება, რედაქტირება, წაშლა</p>
+          </div>
+          <button class="btn-add" id="add-hotel-btn"><i class="fa-solid fa-plus"></i> ახალი სასტუმრო</button>
+        </div>
+        <div class="hotels-admin-grid" id="hotels-admin-grid"></div>
+      </div>
+
+      <!-- ─── TRANSFERS ─────────────────────────────────────────────────── -->
+      <div id="page-transfers" class="page">
+        <div class="page-header">
+          <div>
+            <h2>ტრანსფერი</h2>
+            <p class="page-sub">ტრანსფერ მარშრუტების მართვა</p>
+          </div>
+          <button class="btn-add" id="add-transfer-btn"><i class="fa-solid fa-plus"></i> ახალი ტრანსფერი</button>
+        </div>
+        <div class="transfers-admin-list" id="transfers-admin-list"></div>
       </div>
 
       <!-- ─── CARS ──────────────────────────────────────────────────────── -->
@@ -430,6 +460,146 @@
       <div class="modal-footer">
         <button type="button" class="btn-cancel" onclick="Admin.closeGalleryModal()">გაუქმება</button>
         <button type="submit" class="btn-save">შენახვა</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Hotel Form Modal -->
+<div id="hotel-form-modal" class="modal-bg">
+  <div class="modal-card" style="max-width:600px">
+    <div class="modal-header">
+      <h3 id="hotel-modal-title">ახალი სასტუმრო</h3>
+      <button class="modal-x" onclick="Admin.closeHotelModal()"><i class="fa-solid fa-xmark"></i></button>
+    </div>
+    <form id="hotel-form">
+      <input type="hidden" name="id" />
+      <div class="modal-body">
+        <div class="form-row-2">
+          <div class="form-group"><label>სახელი *</label><input type="text" name="name" required placeholder="Hotel Paragraph" /></div>
+          <div class="form-group"><label>ქალაქი *</label>
+            <select name="city" required>
+              <option value="Tbilisi">თბილისი</option>
+              <option value="Batumi">ბათუმი</option>
+              <option value="Kazbegi">ყაზბეგი</option>
+              <option value="Gudauri">გუდაური</option>
+              <option value="Kutaisi">ქუთაისი</option>
+              <option value="Sighnaghi">სიღნაღი</option>
+              <option value="Mestia">მესტია</option>
+              <option value="Borjomi">ბორჯომი</option>
+              <option value="Mtskheta">მცხეთა</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-row-2">
+          <div class="form-group"><label>ვარსკვლავები</label>
+            <select name="stars"><option value="5">★★★★★ (5)</option><option value="4">★★★★ (4)</option><option value="3">★★★ (3)</option><option value="2">★★ (2)</option><option value="1">★ (1)</option></select>
+          </div>
+          <div class="form-group"><label>ფასი ($)/ღამე *</label><input type="number" name="price_per_night" required min="0" placeholder="80" /></div>
+        </div>
+        <div class="form-row-2">
+          <div class="form-group"><label>ოდ. ფასი ($)</label><input type="number" name="original_price" min="0" /></div>
+          <div class="form-group"><label>მისამართი</label><input type="text" name="address" placeholder="Rustaveli Ave 24, Tbilisi" /></div>
+        </div>
+        <div class="form-group"><label>აღწერა</label><textarea name="description" rows="3"></textarea></div>
+        <div class="form-group"><label>სერვისები (მძიმით)</label><input type="text" name="amenities" placeholder="WiFi,Pool,Gym,Restaurant,Parking,Spa" /></div>
+        <div class="form-group">
+          <label>ფოტო</label>
+          <input type="file" id="hotel-file-pick" accept="image/*" style="display:none" />
+          <button type="button" class="btn-file-pick" onclick="document.getElementById('hotel-file-pick').click()">
+            <i class="fa-solid fa-upload"></i> ფაილიდან არჩევა
+          </button>
+          <input type="text" name="image" id="hotel-image-input" placeholder="ან ჩასვით ბმული https://..." style="margin-top:8px" />
+          <div class="upload-preview" id="hotel-img-preview"></div>
+        </div>
+        <div class="form-row-2">
+          <label class="checkbox-label"><input type="checkbox" name="featured" value="1" /><span>Featured</span></label>
+          <div class="form-group"><label>სტატუსი</label>
+            <select name="available"><option value="1">ხელმისაწვდომი</option><option value="0">მიუწვდომელი</option></select>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn-cancel" onclick="Admin.closeHotelModal()">გაუქმება</button>
+        <button type="submit" class="btn-save"><i class="fa-solid fa-floppy-disk"></i> შენახვა</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Transfer Form Modal -->
+<div id="transfer-form-modal" class="modal-bg">
+  <div class="modal-card" style="max-width:540px">
+    <div class="modal-header">
+      <h3 id="transfer-modal-title">ახალი ტრანსფერი</h3>
+      <button class="modal-x" onclick="Admin.closeTransferModal()"><i class="fa-solid fa-xmark"></i></button>
+    </div>
+    <form id="transfer-form">
+      <input type="hidden" name="id" />
+      <div class="modal-body">
+        <div class="form-row-2">
+          <div class="form-group"><label>საიდან *</label>
+            <select name="from_city" required>
+              <option value="Tbilisi Airport">თბილ. აეროპ.</option>
+              <option value="Kutaisi Airport">ქუთ. აეროპ.</option>
+              <option value="Tbilisi">თბილისი</option>
+              <option value="Batumi">ბათუმი</option>
+              <option value="Kazbegi">ყაზბეგი</option>
+              <option value="Gudauri">გუდაური</option>
+              <option value="Kutaisi">ქუთაისი</option>
+              <option value="Mestia">მესტია</option>
+              <option value="Sighnaghi">სიღნაღი</option>
+            </select>
+          </div>
+          <div class="form-group"><label>სად *</label>
+            <select name="to_city" required>
+              <option value="Tbilisi">თბილისი</option>
+              <option value="Tbilisi Airport">თბილ. აეროპ.</option>
+              <option value="Kutaisi Airport">ქუთ. აეროპ.</option>
+              <option value="Batumi">ბათუმი</option>
+              <option value="Kazbegi">ყაზბეგი</option>
+              <option value="Gudauri">გუდაური</option>
+              <option value="Kutaisi">ქუთაისი</option>
+              <option value="Mestia">მესტია</option>
+              <option value="Sighnaghi">სიღნაღი</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-row-2">
+          <div class="form-group"><label>მანქანის ტიპი</label>
+            <select name="car_type">
+              <option value="sedan">სედანი</option>
+              <option value="minivan">მინივენი</option>
+              <option value="vip">VIP / ლუქსი</option>
+              <option value="jeep">ჯიპი</option>
+            </select>
+          </div>
+          <div class="form-group"><label>ფასი ($) *</label><input type="number" name="price" required min="0" placeholder="50" /></div>
+        </div>
+        <div class="form-row-2">
+          <div class="form-group"><label>ხანგრძლ. (სთ)</label><input type="number" step="0.5" name="duration_hours" placeholder="1.5" /></div>
+          <div class="form-group"><label>მანძილი (კმ)</label><input type="number" name="distance_km" placeholder="30" /></div>
+        </div>
+        <div class="form-row-2">
+          <div class="form-group"><label>მაქს. მგზ.</label><input type="number" name="max_passengers" value="4" min="1" max="20" /></div>
+          <div class="form-group"><label>სტატუსი</label>
+            <select name="available"><option value="1">ხელმისაწვდომი</option><option value="0">მიუწვდომელი</option></select>
+          </div>
+        </div>
+        <div class="form-group"><label>აღწერა</label><textarea name="description" rows="2" placeholder="კომფორტული ტრანსფერი..."></textarea></div>
+        <div class="form-group">
+          <label>ფოტო</label>
+          <input type="file" id="transfer-file-pick" accept="image/*" style="display:none" />
+          <button type="button" class="btn-file-pick" onclick="document.getElementById('transfer-file-pick').click()">
+            <i class="fa-solid fa-upload"></i> ფაილიდან არჩევა
+          </button>
+          <input type="text" name="image" id="transfer-image-input" placeholder="ან ჩასვით ბმული https://..." style="margin-top:8px" />
+          <div class="upload-preview" id="transfer-img-preview"></div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn-cancel" onclick="Admin.closeTransferModal()">გაუქმება</button>
+        <button type="submit" class="btn-save"><i class="fa-solid fa-floppy-disk"></i> შენახვა</button>
       </div>
     </form>
   </div>
