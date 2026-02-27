@@ -12,7 +12,8 @@ const PORT = process.env.PORT || 3000;
 const JWT_SECRET = process.env.JWT_SECRET || 'georgia-premium-secret-2025';
 
 // ─── Database ────────────────────────────────────────────────────────────────
-const db = new DatabaseSync(path.join(__dirname, 'database.db'));
+const dbPath = process.env.VERCEL ? '/tmp/database.db' : path.join(__dirname, 'database.db');
+const db = new DatabaseSync(dbPath);
 db.exec("PRAGMA journal_mode = WAL");
 
 function initDB() {
@@ -485,13 +486,17 @@ app.put('/api/admin/password', auth, (req, res) => {
 // Admin SPA
 app.get('/admin*', (req, res) => res.sendFile(path.join(__dirname, 'public', 'admin.html')));
 
-// Start
-app.listen(PORT, () => {
-  console.log('\n╔═══════════════════════════════════════╗');
-  console.log('║   🇬🇪  GEORGIA PREMIUM TRIPS  🇬🇪     ║');
-  console.log('╠═══════════════════════════════════════╣');
-  console.log(`║  🌐 Website: http://localhost:${PORT}      ║`);
-  console.log(`║  🔐 Admin:   http://localhost:${PORT}/admin ║`);
-  console.log('║  👤 Login:   admin / georgia2025      ║');
-  console.log('╚═══════════════════════════════════════╝\n');
-});
+// Start (local only — Vercel handles serving via module.exports)
+if (!process.env.VERCEL) {
+  app.listen(PORT, () => {
+    console.log('\n╔═══════════════════════════════════════╗');
+    console.log('║   🇬🇪  GEORGIA PREMIUM TRIPS  🇬🇪     ║');
+    console.log('╠═══════════════════════════════════════╣');
+    console.log(`║  🌐 Website: http://localhost:${PORT}      ║`);
+    console.log(`║  🔐 Admin:   http://localhost:${PORT}/admin ║`);
+    console.log('║  👤 Login:   admin / georgia2025      ║');
+    console.log('╚═══════════════════════════════════════╝\n');
+  });
+}
+
+module.exports = app;
